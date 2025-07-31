@@ -14,7 +14,7 @@ const settlementRuleEntries = Object.entries({
 });
 
 const mathRandom = () => {
-    return Math.random();
+    return Math.random(); // NOSONAR
 };
 
 const random1 = () => {

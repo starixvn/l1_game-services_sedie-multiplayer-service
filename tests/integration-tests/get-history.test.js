@@ -30,7 +30,7 @@ export const getHistoryTest = () => {
                     white4: 0,
                     betwin: 0,
                     freeBet: false,
-                    phien: 1190119,
+                    phien: 1190118,
                     name: "NormalUser",
                     odds: {
                         even: 1.97,
@@ -42,8 +42,18 @@ export const getHistoryTest = () => {
                         red2: 2.5,
                     },
                     rate: 1,
-                    betLogDetails: [],
-                    roundId: 1190119,
+                    betLogDetails: [
+                        {
+                            choice: "even",
+                            amount: 50,
+                        },
+                        {
+                            choice: "even",
+                            amount: 50,
+                        },
+                    ],
+                    roundId: 1190118,
+                    appType: 1,
                 },
                 {
                     odd: 0,
@@ -67,8 +77,14 @@ export const getHistoryTest = () => {
                         red2: 2.5,
                     },
                     rate: 1,
-                    betLogDetails: [],
+                    betLogDetails: [
+                        {
+                            choice: "even",
+                            amount: 100,
+                        },
+                    ],
                     roundId: 1190119,
+                    appType: 1,
                 },
             ];
 

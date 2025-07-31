@@ -62,6 +62,7 @@ const userBetData = (uid) => {
             white4: 0,
             roundId: 1190119,
             paid: true,
+            appType: 1,
         },
         {
             freeBet: false,
@@ -81,8 +82,54 @@ const userBetData = (uid) => {
             siteId: "111",
             white3: 0,
             white4: 0,
-            roundId: 1190119,
+            roundId: 1190118,
             paid: true,
+            appType: 1,
+        },
+    ];
+};
+
+const playerBetLogData = (uid) => {
+    return [
+        {
+            uid: uid,
+            name: "NormalUser",
+            freeBet: false,
+            choice: "even",
+            amount: 100,
+            roundId: 1190119,
+            siteId: "111",
+            currency: "$US",
+            playerId: 1,
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            appType: 1,
+        },
+        {
+            uid: uid,
+            name: "NormalUser",
+            freeBet: false,
+            choice: "even",
+            amount: 50,
+            roundId: 1190118,
+            siteId: "111",
+            currency: "$US",
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            appType: 1,
+        },
+        {
+            uid: uid,
+            name: "NormalUser",
+            freeBet: false,
+            choice: "even",
+            amount: 50,
+            roundId: 1190118,
+            siteId: "111",
+            currency: "$US",
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            appType: 1,
         },
     ];
 };
@@ -98,4 +145,4 @@ const promotions = [
     },
 ];
 
-export { game, currencyData, socketOptions, gameConfig, rounds, userBetData, promotions };
+export { game, currencyData, socketOptions, gameConfig, rounds, userBetData, promotions, playerBetLogData };
