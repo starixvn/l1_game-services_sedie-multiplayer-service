@@ -1,0 +1,69 @@
+export default {
+    hostingPort: 5000,
+    apiSettings: {
+        enabledApi: true,
+        apiUrl: "http://l2-game-api-local1-service:5000",
+        authUrl: "http://l2-auth-api-local1-service:5000",
+        client: {
+            id: "game-server",
+            secret: "gameserver@20luminet&",
+        },
+        useAuthenticate: true,
+        requestTimeout: 10000,
+        placeBetTimeout: 4000,
+        enabledApiLogs: true,
+    },
+    authenticateSettings: {
+        url: "http://l2-auth-api-local1-service:5000",
+        id: "game-services",
+        secret: "gameservices@20luminet&",
+        requestTimeout: 10000,
+        useAuthenticate: true,
+        audiences: ["api", "admin-api"],
+    },
+    userServiceSettings: {
+        url: "http://l2-user-service-local1-service:5000",
+    },
+    socketOptions: {
+        pingInterval: 60 * 1000,
+        pingTimeout: 60 * 1000,
+        transports: ["websocket"],
+        allowUpgrades: false,
+        perMessageDeflate: false,
+    },
+    enabledLogs: true,
+    database: {
+        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39201,10.10.50.13:39201,10.10.50.14:39201/?replicaSet=L2pLocal&appName=SedieMultiplayer",
+        options: {
+            dbName: "minigame",
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            auto_reconnect: true,
+        },
+    },
+    sentry: {
+        sentryUrl: "https://8eb9632f2663e57c838ec83febbee14f@sentry-k8s.lumigame.com/4",
+        logIdentifier: "SedieMultiplayer",
+        env: "LOCAL_1",
+    },
+    adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
+    metrics: {
+        enable: true,
+        secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
+    },
+    enableMsgpackParser: false,
+    chatBotSettings: {
+        url: "https://bot.nexdev.net/skynex/api/messages/",
+        token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
+        requestTimeout: 5000,
+        conversationIds: {
+            boostedOdds: -1001829659553,
+        },
+    },
+    enabledBoostedOdds: true,
+    otel: {
+        system: "VG",
+        enabled: false,
+        endpoint: "http://10.10.50.69:4318/v1/traces",
+    },
+};
