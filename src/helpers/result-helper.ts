@@ -10,9 +10,9 @@ const settlementRuleEntries = Object.entries({
     white4: (totalReds: number) => totalReds === 0,
 });
 
-const parseFinalHashToNumbers = (finalHash: string) => {
+const parseFinalHashToNumbers = (finalHash: string, length: number) => {
     const increments = [];
-    for (let i = 0; i < NUMBER_BUTTONS; i++) {
+    for (let i = 0; i < length; i++) {
         const value = parseInt(finalHash.slice(i * 2, i * 2 + 2), 16);
         increments.push(value);
     }
@@ -24,7 +24,9 @@ export const generateResult = ({ finalHash, serverSeed }: { finalHash: string; s
         .random.split(";")
         .slice(0, NUMBER_BUTTONS)
         .map((x: string) => +x);
-    const increments = parseFinalHashToNumbers(finalHash);
+
+    const increments = parseFinalHashToNumbers(finalHash, randomNumbers.length);
+
     return randomNumbers.reduce((acc, x, index) => {
         acc[`red${index + 1}`] = (x + increments[index]) % 2 === 1;
         return acc;

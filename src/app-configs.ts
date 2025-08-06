@@ -2,8 +2,8 @@ export default {
     hostingPort: 5000,
     apiSettings: {
         enabledApi: true,
-        apiUrl: "https://l2-proxy1.lumigame.com/game-api",
-        authUrl: "https://l2-auth1.lumigame.com",
+        apiUrl: "https://l2-proxy.lumigame.com/game-api",
+        authUrl: "https://l2-auth.lumigame.com",
         client: {
             id: "game-server",
             secret: "gameserver@20luminet&",
@@ -14,7 +14,7 @@ export default {
         enabledApiLogs: true,
     },
     authenticateSettings: {
-        url: "https://l2-auth1.lumigame.com",
+        url: "https://l2-auth.lumigame.com",
         id: "game-services",
         secret: "gameservices@20luminet&",
         requestTimeout: 10000,
@@ -22,7 +22,7 @@ export default {
         audiences: ["api", "admin-api"],
     },
     userServiceSettings: {
-        url: "https://l2-proxy1.lumigame.com/user",
+        url: "https://l2-proxy.lumigame.com/user",
     },
     socketOptions: {
         pingInterval: 60 * 1000,
@@ -33,7 +33,7 @@ export default {
     },
     enabledLogs: true,
     database: {
-        url: "mongodb://localhost:27017/",
+        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39200,10.10.50.13:39200,10.10.50.14:39200/?replicaSet=L2Local&appName=sediemultiplayer",
         options: {
             dbName: "minigame",
             useNewUrlParser: true,
@@ -49,6 +49,6 @@ export default {
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     disableCors: true,
     gameManagementApiSettings: {
-        BASE: "https://l2-proxy1.lumigame.com/game-management-service",
+        BASE: "https://l2-proxy.lumigame.com/game-management-service",
     },
 };

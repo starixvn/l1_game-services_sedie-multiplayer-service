@@ -2,7 +2,7 @@ import { BET_CHOICES } from "./constants";
 
 export default {
     id: 148,
-    name: "SedieMutiplayer",
+    name: "SedieMultiplayer",
     durations: {
         wholeRound: 23,
         placingBets: 18,
@@ -15,7 +15,7 @@ export default {
     numberOfRoundHistory: 100,
     provablyFair: true,
     botSettings: {
-        ratio: { mainOption: 80, sideOption: 20 },
+        ratio: { mainOption: 90, sideOption: 10 },
         mainOption: [BET_CHOICES.even, BET_CHOICES.odd],
         sideOption: [BET_CHOICES.red2, BET_CHOICES.red3, BET_CHOICES.red4, BET_CHOICES.white3, BET_CHOICES.white4],
     },
