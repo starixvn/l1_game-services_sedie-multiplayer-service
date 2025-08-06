@@ -17,7 +17,7 @@ __tests__/
 .gitattributes
 .github/
 .gitignore
-.gitmodules
+.gitmodules 
 .husky/
 .istanbul.yml
 .jscs.json

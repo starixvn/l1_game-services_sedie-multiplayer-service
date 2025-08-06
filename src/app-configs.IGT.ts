@@ -2,7 +2,7 @@ import appConfigs from "./app-configs";
 
 export default Object.assign(appConfigs, {
     authenticateSettings: {
-        url: "http://l1-auth-api-local-service:5000",
+        url: "https://auth.lumigame.com",
         id: "game-services",
         secret: "gameservices@20luminet&",
         requestTimeout: 3000,

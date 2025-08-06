@@ -11,7 +11,6 @@ const options = {
 
 const request = http.request(options, (res) => {
     console.info(`STATUS: ${res.statusCode}`);
-
     process.exitCode = res.statusCode === 200 ? 0 : 1;
     process.exit();
 });

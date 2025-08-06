@@ -1,12 +1,16 @@
-FROM hub.lumigame.com/base/node:18.1-alpine-24h1.1 AS builder
+FROM hub.lumigame.com/base/node:20.9.0-alpine AS builder
 WORKDIR /app
 COPY package.json yarn.lock .modprunerrc ./
 RUN npm run reg \
-    && yarn install --production \
-    && npx mod-pruner prune --force
-COPY ./src/ .
+    && yarn install
+COPY . .
 
-FROM hub.lumigame.com/base/node:18.1-alpine-24h1.1
+RUN npm run build
+RUN rm -rf ./node_modules
+RUN yarn install --production \
+    && npx mod-pruner prune --force 
+
+FROM hub.lumigame.com/base/node:20.9.0-alpine
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
 RUN mkdir /app && chown node:node /app
@@ -14,8 +18,10 @@ WORKDIR /app
 
 USER node
 ENV PATH /app/node_modules/.bin:$PATH
-COPY --from=builder /app .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/yarn.lock ./
 
-HEALTHCHECK --interval=10s CMD node --es-module-specifier-resolution=node healthcheck.js
-
-CMD [ "node", "--es-module-specifier-resolution=node", "./app.js" ]
+EXPOSE 5000
+CMD [ "node", "--experimental-loader=extensionless","./app.js" ]

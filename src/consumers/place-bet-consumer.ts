@@ -1,11 +1,10 @@
 import { helpers } from "sc-common";
-import PlaceBetConsumer from "sc-game-base/src/core/event-consumers/place-bet-consumer";
+import BasePlaceBetConsumer from "sc-game-base/src/core/event-consumers/place-bet-consumer";
 
-export default class SeDiePlaceBetConsumer extends PlaceBetConsumer {
-    composeBettingTimeValidationCriteria(roundId) {
+export default class PlaceBetConsumer extends BasePlaceBetConsumer {
+    composeBettingTimeValidationCriteria(roundId: number) {
         const configs = this.gameData.gameConfigs;
-        const shakeThePlateTime = this.definition.durations.placingBets + this.definition.durations.shakeThePlateDuration;
-
+        const shakeThePlateTime = this.definition.durations.placingBets + (this.definition.durations as any).shakeThePlateDuration;
         return [
             {
                 failure: !configs.enabled,

@@ -10,8 +10,30 @@ export default {
         },
         useAuthenticate: true,
         requestTimeout: 10000,
-        placeBetTimeout: 4000,
+        placeBetTimeout: 2000,
         enabledApiLogs: true,
+    },
+    socketOptions: {
+        pingInterval: 60 * 1000,
+        pingTimeout: 60 * 1000,
+        transports: ["websocket"],
+        allowUpgrades: false,
+        perMessageDeflate: false,
+    },
+    enabledLogs: true,
+    database: {
+        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39101,10.10.50.13:39101,10.10.50.14:39101/?replicaSet=L1pLocal&appName=sediemultiplayer",
+        options: {
+            dbName: "minigame",
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            auto_reconnect: true,
+        },
+    },
+    sentry: {
+        sentryUrl: "https://13f39b8359404ed5aec23655e64ccf78@sentry.lumigame.com/2",
+        logIdentifier: "sedie-multiplayer",
+        env: "LOCAL_1",
     },
     authenticateSettings: {
         url: "http://l1-auth-api-local1-service:5000",
@@ -24,46 +46,18 @@ export default {
     userServiceSettings: {
         url: "http://l1-user-service-local1-service:5000",
     },
-    socketOptions: {
-        pingInterval: 60 * 1000,
-        pingTimeout: 60 * 1000,
-        transports: ["websocket"],
-        allowUpgrades: false,
-        perMessageDeflate: false,
-    },
-    enabledLogs: true,
-    database: {
-        url: "mongodb://lmn_backend:LmnBackend@10.10.50.12:39101,10.10.50.13:39101,10.10.50.14:39101/?replicaSet=L1pLocal&appName=SedieMultiplayer",
-        options: {
-            dbName: "minigame",
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            auto_reconnect: true,
-        },
-    },
-    sentry: {
-        sentryUrl: "https://50e405ebce7003a0e1edbda2bf28b14c@sentry-k8s.lumigame.com/3",
-        logIdentifier: "SedieMultiplayer",
-        env: "LOCAL-1",
-    },
     adminSecretKey: "asWDEerfOIdgsdqRTFabvmgh",
     metrics: {
         enable: true,
         secretKey: "6c1f0f28-70f2-46ae-b031-22624a6cd8df",
     },
     enableMsgpackParser: false,
-    chatBotSettings: {
-        url: "https://bot.nexdev.net/skynex/api/messages/",
-        token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
-        requestTimeout: 5000,
-        conversationIds: {
-            boostedOdds: -1001516573929,
-        },
+    gameManagementApiSettings: {
+        BASE: "http://l1-game-management-service-local1-service:5000",
     },
-    enabledBoostedOdds: true,
     otel: {
         system: "SG",
-        enabled: false,
+        enabled: true,
         endpoint: "http://10.10.50.69:4318/v1/traces",
     },
 };

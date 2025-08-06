@@ -3,17 +3,20 @@ module.exports = async () => {
         rootDir: "./",
         verbose: true,
         transform: {
+            "^.+\\.ts?$": "ts-jest",
             "^.+\\.js?$": "babel-jest",
         },
         transformIgnorePatterns: [
-            "node_modules/(?!(sc-base-database|sc-common|sc-game-base|sc-base-apis|sc-api-client|sc-game-service-integration-utils|axios)/)",
+            "node_modules/(?!(sc-base-database|sc-common|sc-game-base|sc-base-apis|sc-api-client|jest-auto-fixture|d3-array|internmap|axios|nanoid|crypto-random-string|sc-game-service-integration-utils|sc-game-management-client|prom-client|random-int)/.*)",
         ],
+        preset: "ts-jest",
         testEnvironment: "node",
         testResultsProcessor: "jest-sonar-reporter",
-        setupFilesAfterEnv: ["jest-extended"],
-        reporters: ["default", ["jest-junit", { outputDirectory: "coverage" }]],
+        reporters: ["default", ["jest-junit", { outputDirectory: "coverage", outputName: "unit-tests.xml" }]],
         coverageReporters: ["clover", "lcov", "text-summary", "cobertura"],
         coverageDirectory: "coverage",
-        testTimeout: 120000,
+        moduleNameMapper: {
+            "d3-array": "<rootDir>/node_modules/d3-array/dist/d3-array.min.js",
+        },
     };
 };
