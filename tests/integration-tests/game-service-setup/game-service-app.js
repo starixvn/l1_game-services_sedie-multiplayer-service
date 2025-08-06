@@ -14,7 +14,7 @@ export const run = async () => {
 
     const gameData = new Table.TableGameData(gameSettings.durations.wholeRound);
     const container = new ContainerRegistry().register(appConfigs, definition, gameData);
-    const app = new Core.BaseGameApp("SedieMultiplayer", appConfigs);
+    const app = new Core.BaseGameApp("SeDieMultiplayer", appConfigs);
     await app.run();
     await app.startGame(container);
 };

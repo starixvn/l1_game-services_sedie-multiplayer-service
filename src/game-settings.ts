@@ -2,7 +2,7 @@ import { BET_CHOICES } from "./constants";
 
 export default {
     id: 148,
-    name: "SedieMultiplayer",
+    name: "SeDieMultiplayer",
     durations: {
         wholeRound: 23,
         placingBets: 18,
