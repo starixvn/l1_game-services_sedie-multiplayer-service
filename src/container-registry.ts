@@ -1,7 +1,7 @@
 import awilix from "awilix";
 import { Table } from "sc-game-base";
 import { Bets, Rounds, TmpBets, Results, BetLogs } from "./models/index";
-import { PlaceBetConsumer, RoundResultConsumer, UserSigninConsumer } from "./consumers";
+import { PlaceBetConsumer, RoundResultConsumer, SettleGameRoundConsumer, UserSigninConsumer } from "./consumers";
 import { PlayerResultBoardPublisher } from "./publishers";
 import GameCron from "./crons/game-cron";
 import ProcessBetQueue from "./crons/process-bet-queue";
@@ -35,6 +35,9 @@ export default class ContainerRegistry extends Table.TableContainerRegistry {
             placeBetConsumer: asClass(PlaceBetConsumer).singleton(),
             roundResultConsumer: asClass(RoundResultConsumer).singleton(),
             userSignInConsumer: asClass(UserSigninConsumer).singleton(),
+            settleGameRoundConsumer: asFunction((cradle: any) => {
+                return new SettleGameRoundConsumer(cradle, cradle.playerResultBoardPublisher, cradle.playerResultBoardManager);
+            }).singleton().proxy(),
         });
     }
 
