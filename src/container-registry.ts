@@ -7,7 +7,7 @@ import GameCron from "./crons/game-cron";
 import ProcessBetQueue from "./crons/process-bet-queue";
 import { PlayerResultBoardManager } from "./helpers";
 
-const { asClass, asValue } = awilix;
+const { asClass, asValue, asFunction } = awilix;
 
 export default class ContainerRegistry extends Table.TableContainerRegistry {
     registerPFSettings() {
@@ -51,8 +51,12 @@ export default class ContainerRegistry extends Table.TableContainerRegistry {
 
         this.container.register({
             bot: asClass(Table.Crons.TableGameConfigBot).singleton(),
-            gameCron: asClass(GameCron).singleton().proxy(),
-            processBetQueue: asClass(ProcessBetQueue).singleton().proxy(),
+            gameCron: asFunction((cradle: any) => {
+                return new GameCron(cradle, cradle.playerResultBoardManager);
+            }).singleton().proxy(),
+            processBetQueue: asFunction((cradle: any) => {
+                return new ProcessBetQueue(cradle, cradle.playerResultBoardPublisher, cradle.playerResultBoardManager);
+            }).singleton().proxy(),
         });
     }
 

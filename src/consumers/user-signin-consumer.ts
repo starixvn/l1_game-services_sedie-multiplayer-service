@@ -9,8 +9,8 @@ import { PlayGamePermissionValidator } from "sc-game-base/src/core/validators";
 import { Socket } from "socket.io";
 
 export default class UserSigninConsumer extends Table.EventConsumers.TableUserSignInConsumer {
-    private playerResultBoardManager: PlayerResultBoardManager;
     private playerResultBoardPublisher: PlayerResultBoardPublisher;
+    private playerResultBoardManager: PlayerResultBoardManager;
 
     constructor(
         definition: TableGameDefinition,
@@ -19,17 +19,17 @@ export default class UserSigninConsumer extends Table.EventConsumers.TableUserSi
         playGamePermissionValidator: PlayGamePermissionValidator,
         appConfigs: Object,
         gameManagementApiClientFactory: GameManagementApiClientFactory,
-        playerResultBoardManager: PlayerResultBoardManager,
-        playerResultBoardPublisher: PlayerResultBoardPublisher
+        playerResultBoardPublisher: PlayerResultBoardPublisher,
+        playerResultBoardManager: PlayerResultBoardManager
     ) {
         super(definition, gameData, userSignInPublisher, playGamePermissionValidator, appConfigs, gameManagementApiClientFactory);
-        
-        this.playerResultBoardManager = playerResultBoardManager;
         this.playerResultBoardPublisher = playerResultBoardPublisher;
+        this.playerResultBoardManager = playerResultBoardManager;
     }
 
     handleSignInSuccess(socketClient: Socket, userInfo: any, userSession: any) {
         super.handleSignInSuccess(socketClient, userInfo, userSession);
+        
         const boardData = this.playerResultBoardManager.getBoardData();
         this.playerResultBoardPublisher.publishBoardDataToUser(userInfo.id, boardData);
     }
