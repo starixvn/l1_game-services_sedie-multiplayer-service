@@ -31,8 +31,7 @@ export default class SettleGameRoundConsumer extends Table.EventConsumers.TableS
 
                     this.captureBetResult(bet.uid, betResult, bet.rate);
                     await this.userBetResultPublisher.publish(bet.uid, betResult);
-
-                    this.playerResultBoardManager.updateWinAmounts(settlementResult, odds);
+                    this.playerResultBoardManager.updateWinAmounts(settlementResult, bet);
                 })
             );
         }

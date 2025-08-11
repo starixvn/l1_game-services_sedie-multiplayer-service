@@ -1,96 +1,121 @@
 import GameData from "../game-data";
 
+interface PlayerEntry {
+    uid: string;
+    name: string;
+    betAmount: number;
+    lastBetTime: Date;
+    betChoices: Record<string, number>;
+    winAmount: number | null;
+}
+
 export default class PlayerResultBoardManager {
-    gameData: GameData;
-    maxPlayers: number;
+    private gameData: GameData;
+    private readonly maxPlayers: number = 10;
 
     constructor(gameData: GameData) {
         this.gameData = gameData;
-        this.maxPlayers = 10;
     }
 
     addOrUpdatePlayer(player: any, betAmount: number, betChoice: string) {
         const { playerResultBoard } = this.gameData;
-        const playerName = player.profile.name;
-        
-        let existingIndex = playerResultBoard.players.findIndex(p => p.uid === player.UID);
-        if (existingIndex !== -1) {
-            const existingPlayer = playerResultBoard.players[existingIndex];
-            existingPlayer.betAmount += betAmount;
-            existingPlayer.lastBetTime = new Date();
-            existingPlayer.betChoices = existingPlayer.betChoices || {};
-            existingPlayer.betChoices[betChoice] = (existingPlayer.betChoices[betChoice] || 0) + betAmount;
-            
-            playerResultBoard.players.splice(existingIndex, 1);
-            playerResultBoard.players.unshift(existingPlayer);
+        const uid = player.UID || player.id;
+        const name = player.profile?.name || player.name;
+
+        const index = playerResultBoard.players.findIndex(p => p.uid === uid);
+
+        if (index !== -1) {
+            this.updateExistingPlayer(index, betAmount, betChoice);
         } else {
-            const newPlayerEntry = {
-                uid: player.UID,
-                name: playerName,
-                originalName: player.profile.name,
-                betAmount: betAmount,
-                lastBetTime: new Date(),
-                betChoices: { [betChoice]: betAmount },
-                winAmount: null, 
-            };
-            
-            playerResultBoard.players.unshift(newPlayerEntry);
-            
-            if (playerResultBoard.players.length > this.maxPlayers) {
-                playerResultBoard.players.pop();
-            }
-            
-            playerResultBoard.totalPlayers = this.countTotalPlayers();
+            this.addNewPlayer(uid, name, betAmount, betChoice);
         }
     }
 
-    updateWinAmounts(settlementResult: any, odds: any) {
+    updateWinAmounts(settlementResult: Record<string, boolean>, bet: any) {
         const { playerResultBoard } = this.gameData;
-        
-        playerResultBoard.players.forEach(player => {
-            let totalWin = 0;
-            let totalBet = 0;
-            
-            Object.entries(player.betChoices).forEach(([choice, amount]) => {
-                totalBet += Number(amount);
-                if (settlementResult[choice]) {
-                    const winAmount = Number(amount) * odds[choice];
-                    totalWin += winAmount;
-                }
-            });
-            
-            player.winAmount = totalWin > 0 ? totalWin : -totalBet;
-        });
-        
-        playerResultBoard.isSettled = true;
+        const odds = bet.odds ?? this.gameData.gameConfigs.odds;
+        const index = playerResultBoard.players.findIndex(p => p.uid === bet.uid);
+
+        if (index === -1) return;
+
+        const player = playerResultBoard.players[index];
+        const { totalBet, totalWin } = this.calculateWinnings(bet, settlementResult, odds);
+
+        player.winAmount = totalWin > 0 ? totalWin : -totalBet;
     }
 
     resetForNewRound() {
-        const { playerResultBoard } = this.gameData;
-        playerResultBoard.players = [];
-        playerResultBoard.totalPlayers = 0;
-        playerResultBoard.isSettled = false;
+        this.gameData.playerResultBoard = {
+            players: [],
+            totalPlayers: 0,
+            isSettled: false
+        };
     }
 
     getBoardData() {
         const { playerResultBoard } = this.gameData;
-        
+
         return {
             roundId: this.gameData.roundId,
             totalPlayers: playerResultBoard.totalPlayers,
-            players: playerResultBoard.players.map(player => ({
-                uid: player.uid,
-                name: player.name,
-                betAmount: player.betAmount,
-                winAmount: player.winAmount,
-                lastBetTime: player.lastBetTime
+            players: playerResultBoard.players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
+                uid, name, betAmount, winAmount, lastBetTime
             })),
             isSettled: playerResultBoard.isSettled
         };
     }
 
     countTotalPlayers() {
-        return Object.keys(this.gameData.ingame).length;
+        return this.gameData.playerResultBoard.totalPlayers || 0;
+    }
+
+    private updateExistingPlayer(index: number, betAmount: number, betChoice: string) {
+        const { players } = this.gameData.playerResultBoard;
+        const player = players[index];
+
+        player.betAmount += betAmount;
+        player.lastBetTime = new Date();
+        player.betChoices[betChoice] = (player.betChoices[betChoice] || 0) + betAmount;
+
+        players.splice(index, 1);
+        players.unshift(player);
+    }
+
+    private addNewPlayer(uid: string, name: string, betAmount: number, betChoice: string) {
+        const { playerResultBoard } = this.gameData;
+
+        const newPlayer: PlayerEntry = {
+            uid,
+            name,
+            betAmount,
+            lastBetTime: new Date(),
+            betChoices: { [betChoice]: betAmount },
+            winAmount: null
+        };
+
+        playerResultBoard.players.unshift(newPlayer);
+        playerResultBoard.totalPlayers++;
+
+        if (playerResultBoard.players.length > this.maxPlayers) {
+            playerResultBoard.players.pop();
+        }
+    }
+
+    private calculateWinnings(bet: any, settlementResult: Record<string, boolean>, odds: Record<string, number>) {
+        let totalBet = 0;
+        let totalWin = 0;
+        
+        const betChoices = Object.keys(settlementResult);
+        betChoices.forEach(choice => {
+            const amount = Number(bet[choice]) || 0;
+            if (amount > 0) {
+                totalBet += amount;
+                if (settlementResult[choice]) {
+                    totalWin += amount * odds[choice];
+                }
+            }
+        });
+
+        return { totalBet, totalWin };
     }
 }
-
