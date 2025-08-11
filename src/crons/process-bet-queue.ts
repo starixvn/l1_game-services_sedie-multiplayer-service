@@ -8,8 +8,8 @@ import GameManagementApiClientFactory from "sc-game-base/src/core/game-managemen
 import BaseMetrics from "sc-game-base/src/core/base-metrics";
 
 export default class ProcessBetQueue extends Table.Crons.TableProcessBetQueue {
-    private playerResultBoardPublisher: PlayerResultBoardPublisher;
-    private playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardPublisher: PlayerResultBoardPublisher;
+    private readonly playerResultBoardManager: PlayerResultBoardManager;
 
     constructor({
         definition,

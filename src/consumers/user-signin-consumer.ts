@@ -9,9 +9,10 @@ import { PlayGamePermissionValidator } from "sc-game-base/src/core/validators";
 import { Socket } from "socket.io";
 
 export default class UserSigninConsumer extends Table.EventConsumers.TableUserSignInConsumer {
-    private playerResultBoardPublisher: PlayerResultBoardPublisher;
-    private playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardPublisher: PlayerResultBoardPublisher;
+    private readonly playerResultBoardManager: PlayerResultBoardManager;
 
+    // eslint-disable-next-line sonarjs/max-params
     constructor(
         definition: TableGameDefinition,
         gameData: GameData,

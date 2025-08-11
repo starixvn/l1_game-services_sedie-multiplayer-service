@@ -10,7 +10,7 @@ interface PlayerEntry {
 }
 
 export default class PlayerResultBoardManager {
-    private gameData: GameData;
+    private readonly gameData: GameData;
     private readonly maxPlayers: number = 10;
 
     constructor(gameData: GameData) {
@@ -36,7 +36,9 @@ export default class PlayerResultBoardManager {
         const odds = bet.odds ?? this.gameData.gameConfigs.odds;
         const index = playerResultBoard.players.findIndex(p => p.uid === bet.uid);
 
-        if (index === -1) return;
+        if (index === -1){
+            return;
+        }
 
         const player = playerResultBoard.players[index];
         const { totalBet, totalWin } = this.calculateWinnings(bet, settlementResult, odds);

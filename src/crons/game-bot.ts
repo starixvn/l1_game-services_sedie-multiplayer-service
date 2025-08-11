@@ -7,8 +7,8 @@ import GameData from "../game-data";
 import GameManagementApiClientFactory, { getOrDefault } from "sc-game-base/src/core/game-management-api";
 
 export default class GameBot extends Table.Crons.TableGameConfigBot {
-    private playerResultBoardPublisher: PlayerResultBoardPublisher;
-    private playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardPublisher: PlayerResultBoardPublisher;
+    private readonly playerResultBoardManager: PlayerResultBoardManager;
 
     constructor(
         definition: TableGameDefinition,

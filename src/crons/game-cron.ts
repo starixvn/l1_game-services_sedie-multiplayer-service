@@ -2,13 +2,18 @@ import { Table } from "sc-game-base";
 import { PlayerResultBoardManager } from "../helpers";
 import { GameDefinition } from "sc-game-base/src/core";
 import GameData from "../game-data";
-import { SettleGameRoundConsumer, RoundResultConsumer, RoundIdConsumer } from "sc-game-base/src/core/event-consumers";
+import {
+    SettleGameRoundConsumer,
+    RoundResultConsumer,
+    RoundIdConsumer,
+    ProvablyFairConsumer,
+    UnsettledRoundConsumer
+} from "sc-game-base/src/core/event-consumers";
 import { GameStatusPublisher, RunningRoundInfoPublisher } from "sc-game-base/src/core/event-publishers";
 import GameManagementApiClientFactory from "sc-game-base/src/core/game-management-api";
-import { ProvablyFairConsumer, UnsettledRoundConsumer } from "sc-game-base/src/core/event-consumers";
 
 export default class GameCron extends Table.Crons.TableGameCron {
-    private playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardManager: PlayerResultBoardManager;
 
     constructor({
         definition,

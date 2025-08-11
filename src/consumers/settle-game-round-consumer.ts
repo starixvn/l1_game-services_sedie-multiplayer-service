@@ -7,8 +7,8 @@ import { RoundResultPublisher, UserBetResultPublisher } from "sc-game-base/src/c
 import GameManagementApiClientFactory from "sc-game-base/src/core/game-management-api";
 
 export default class SettleGameRoundConsumer extends Table.EventConsumers.TableSettleGameRoundConsumer {
-    private playerResultBoardPublisher: PlayerResultBoardPublisher;
-    private playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardPublisher: PlayerResultBoardPublisher;
+    private readonly playerResultBoardManager: PlayerResultBoardManager;
 
     constructor({
         definition,
