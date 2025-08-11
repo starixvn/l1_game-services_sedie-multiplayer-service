@@ -1,20 +1,54 @@
 import GameCron from "../../../src/crons/game-cron";
+import { PlayerResultBoardManager } from "../../../src/helpers";
 
 jest.mock("sc-game-base", () => ({
     Table: {
         Crons: {
             TableGameCron: class {
-                constructor(_: any) {}
+                constructor(params: any) {}
+                resetForNewRound() {}
             },
         },
     },
 }));
+
+jest.mock("../../../src/helpers", () => ({
+    PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
+        resetForNewRound: jest.fn(),
+    })),
+}));
+
 describe("GameCron", () => {
     let gameCron: GameCron;
+    let mockPlayerResultBoardManager: jest.Mocked<PlayerResultBoardManager>;
 
     beforeEach(() => {
         // Arrange
-        gameCron = new GameCron({} as any);
+        mockPlayerResultBoardManager = {
+            resetForNewRound: jest.fn(),
+            addOrUpdatePlayer: jest.fn(),
+            updateWinAmounts: jest.fn(),
+            getBoardData: jest.fn(),
+            countTotalPlayers: jest.fn(),
+        } as unknown as jest.Mocked<PlayerResultBoardManager>;
+        
+        gameCron = new GameCron({
+            definition: {} as any,
+            gameData: {} as any,
+            bot: {} as any,
+            settleGameRoundConsumer: {} as any,
+            gameStatusPublisher: {} as any,
+            runningRoundInfoPublisher: {} as any,
+            logService: {} as any,
+            roundResultConsumer: {} as any,
+            resultsRepository: {} as any,
+            appConfigs: {} as any,
+            gameManagementApiClientFactory: {} as any,
+            roundIdConsumer: {} as any,
+            provablyFairConsumer: {} as any,
+            unsettledRoundConsumer: {} as any,
+            playerResultBoardManager: mockPlayerResultBoardManager,
+        });
     });
 
     describe("isStartingTime", () => {
@@ -61,6 +95,21 @@ describe("GameCron", () => {
 
             // Assert
             expect(result).toBe(false);
+        });
+    });
+
+    describe("resetForNewRound", () => {
+        it("should call super.resetForNewRound and playerResultBoardManager.resetForNewRound", () => {
+            // Arrange
+            const superResetSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(gameCron)), 'resetForNewRound');
+            const playerResultBoardResetSpy = jest.spyOn(mockPlayerResultBoardManager, 'resetForNewRound');
+
+            // Act
+            gameCron.resetForNewRound();
+
+            // Assert
+            expect(superResetSpy).toHaveBeenCalled();
+            expect(playerResultBoardResetSpy).toHaveBeenCalled();
         });
     });
 });

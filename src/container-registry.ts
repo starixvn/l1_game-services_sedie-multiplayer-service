@@ -3,11 +3,10 @@ import { Table } from "sc-game-base";
 import { Bets, Rounds, TmpBets, Results, BetLogs } from "./models/index";
 import { PlaceBetConsumer, RoundResultConsumer, SettleGameRoundConsumer, UserSigninConsumer } from "./consumers";
 import { PlayerResultBoardPublisher } from "./publishers";
-import GameCron from "./crons/game-cron";
-import ProcessBetQueue from "./crons/process-bet-queue";
 import { PlayerResultBoardManager } from "./helpers";
+import { GameBot, GameCron, ProcessBetQueue } from "./crons";
 
-const { asClass, asValue, asFunction } = awilix;
+const { asClass, asValue } = awilix;
 
 export default class ContainerRegistry extends Table.TableContainerRegistry {
     registerPFSettings() {
@@ -35,9 +34,7 @@ export default class ContainerRegistry extends Table.TableContainerRegistry {
             placeBetConsumer: asClass(PlaceBetConsumer).singleton(),
             roundResultConsumer: asClass(RoundResultConsumer).singleton(),
             userSignInConsumer: asClass(UserSigninConsumer).singleton(),
-            settleGameRoundConsumer: asFunction((cradle: any) => {
-                return new SettleGameRoundConsumer(cradle, cradle.playerResultBoardPublisher, cradle.playerResultBoardManager);
-            }).singleton().proxy(),
+            settleGameRoundConsumer: asClass(SettleGameRoundConsumer).singleton().proxy(),
         });
     }
 
@@ -53,13 +50,10 @@ export default class ContainerRegistry extends Table.TableContainerRegistry {
         super.registerCrons();
 
         this.container.register({
-            bot: asClass(Table.Crons.TableGameConfigBot).singleton(),
-            gameCron: asFunction((cradle: any) => {
-                return new GameCron(cradle, cradle.playerResultBoardManager);
-            }).singleton().proxy(),
-            processBetQueue: asFunction((cradle: any) => {
-                return new ProcessBetQueue(cradle, cradle.playerResultBoardPublisher, cradle.playerResultBoardManager);
-            }).singleton().proxy(),
+            bot: asClass(GameBot).singleton(),
+            gameCron: asClass(GameCron).singleton().proxy(),
+            processBetQueue: asClass(ProcessBetQueue).singleton().proxy(),
+            
         });
     }
 

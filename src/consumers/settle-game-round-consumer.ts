@@ -1,13 +1,52 @@
 import { Table } from "sc-game-base";
 import { PlayerResultBoardPublisher } from "../publishers";
 import { PlayerResultBoardManager } from "../helpers";
+import { GameDefinition } from "sc-game-base/src/core";
+import GameData from "../game-data";
+import { RoundResultPublisher, UserBetResultPublisher } from "sc-game-base/src/core/event-publishers";
+import GameManagementApiClientFactory from "sc-game-base/src/core/game-management-api";
 
 export default class SettleGameRoundConsumer extends Table.EventConsumers.TableSettleGameRoundConsumer {
     private playerResultBoardPublisher: PlayerResultBoardPublisher;
     private playerResultBoardManager: PlayerResultBoardManager;
 
-    constructor(params: any, playerResultBoardPublisher: PlayerResultBoardPublisher, playerResultBoardManager: PlayerResultBoardManager) {
-        super(params);
+    constructor({
+        definition,
+        gameData,
+        roundResultPublisher,
+        userBetResultPublisher,
+        endGame,
+        roundsRepository,
+        betsRepository,
+        gameManagementApiClientFactory,
+        tempBetsRepository,
+        playerResultBoardPublisher,
+        playerResultBoardManager,
+    }: {
+        definition: GameDefinition;
+        gameData: GameData;
+        roundResultPublisher: RoundResultPublisher;
+        userBetResultPublisher: UserBetResultPublisher;
+        endGame: any;
+        roundsRepository: any;
+        betsRepository: any;
+        gameManagementApiClientFactory: GameManagementApiClientFactory;
+        tempBetsRepository: any;
+        playerResultBoardPublisher: PlayerResultBoardPublisher;
+        playerResultBoardManager: PlayerResultBoardManager;
+    }) {
+        super({
+            definition,
+            gameData,
+            roundResultPublisher,
+            userBetResultPublisher,
+            endGame,
+            roundsRepository,
+            betsRepository,
+            gameManagementApiClientFactory,
+            tempBetsRepository,
+        });
+        
         this.playerResultBoardPublisher = playerResultBoardPublisher;
         this.playerResultBoardManager = playerResultBoardManager;
     }

@@ -13,10 +13,12 @@ module.exports = async () => {
         testEnvironment: "node",
         testResultsProcessor: "jest-sonar-reporter",
         reporters: ["default", ["jest-junit", { outputDirectory: "coverage", outputName: "unit-tests.xml" }]],
-        coverageReporters: ["clover", "lcov", "text-summary", "cobertura"],
+        coverageReporters: ["clover", "lcov", "text-summary", "cobertura", "text"],
         coverageDirectory: "coverage",
         moduleNameMapper: {
             "d3-array": "<rootDir>/node_modules/d3-array/dist/d3-array.min.js",
         },
+        collectCoverageFrom: ["src/{consumers,crons,publishers,helpers}/**/*.ts", "!src/**/*.d.ts",],
+        coveragePathIgnorePatterns: ["/node_modules/", "src/.*\\.(models|configs)\\.ts$", "src/.*/index\\.ts$"],
     };
 };
