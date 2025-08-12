@@ -13,6 +13,7 @@ export default {
     choicesMapper: { even: 1, odd: 2, red3: 3, red4: 4, white3: 5, white4: 6, red2: 7 },
     hedgeBetGroups: [[BET_CHOICES.even, BET_CHOICES.odd]],
     numberOfRoundHistory: 100,
+    historyPageSize: 10,
     provablyFair: true,
     botSettings: {
         ratio: { mainOption: 90, sideOption: 10 },

@@ -60,64 +60,64 @@ const rounds = [
     },
 ];
 
-// const userBetData = (uid) => {
-//     return [
-//         {
-//             freeBet: false,
-//             uid: uid,
-//             betwin: 0,
-//             currency: "$US",
-//             even: 100,
-//             playerId: 1,
-//             name: "NormalUser",
-//             odd: 0,
-//             odds: gameConfig.odds,
-//             operatorId: "dummy-operator-id",
-//             rate: 1,
-//             red2: 0,
-//             red3: 0,
-//             red4: 0,
-//             siteId: "111",
-//             white3: 0,
-//             white4: 0,
-//             roundId: 1,
-//             paid: true,
-//             appType: 1,
-//         },
-//     ];
-// };
+const userBetData = (uid) => {
+    return [
+        {
+            freeBet: false,
+            uid: uid,
+            betwin: 0,
+            currency: "$US",
+            even: 100,
+            playerId: 1,
+            name: "NormalUser",
+            odd: 0,
+            odds: gameConfig.odds,
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            red2: 0,
+            red3: 0,
+            red4: 0,
+            siteId: "111",
+            white3: 0,
+            white4: 0,
+            roundId: 1,
+            paid: true,
+            appType: 1,
+        },
+    ];
+};
 
-// const playerBetLogData = (uid) => {
-//     return [
-//         {
-//             uid: uid,
-//             name: "NormalUser",
-//             freeBet: false,
-//             choice: "even",
-//             amount: 50,
-//             roundId: 1,
-//             siteId: "111",
-//             currency: "$US",
-//             playerId: 1,
-//             operatorId: "dummy-operator-id",
-//             rate: 1,
-//             appType: 1,
-//         },
-//         {
-//             uid: uid,
-//             name: "NormalUser",
-//             freeBet: false,
-//             choice: "even",
-//             amount: 50,
-//             roundId: 1,
-//             siteId: "111",
-//             currency: "$US",
-//             playerId: 1,
-//             operatorId: "dummy-operator-id",
-//             rate: 1,
-//             appType: 1,
-//         },
-//     ];
-// };
+const playerBetLogData = (uid) => {
+    return [
+        {
+            uid: uid,
+            name: "NormalUser",
+            freeBet: false,
+            choice: "even",
+            amount: 50,
+            roundId: 1,
+            siteId: "111",
+            currency: "$US",
+            playerId: 1,
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            appType: 1,
+        },
+        {
+            uid: uid,
+            name: "NormalUser",
+            freeBet: false,
+            choice: "even",
+            amount: 50,
+            roundId: 1,
+            siteId: "111",
+            currency: "$US",
+            playerId: 1,
+            operatorId: "dummy-operator-id",
+            rate: 1,
+            appType: 1,
+        },
+    ];
+};
 
-export { game, currencyData, socketOptionsFunc, gameConfig, pfResults, rounds };
+export { game, currencyData, socketOptionsFunc, gameConfig, pfResults, rounds, userBetData, playerBetLogData };
