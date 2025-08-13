@@ -28,7 +28,7 @@ jest.mock("../../../src/publishers", () => ({
 jest.mock("../../../src/helpers", () => ({
     PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
         addOrUpdatePlayer: jest.fn(),
-        getBoardData: jest.fn().mockReturnValue({ board: "data" }),
+        getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { board: "data" } }),
     })),
 }));
 
@@ -76,14 +76,14 @@ describe("GameBot", () => {
 
     describe("updateAndPublishPlayerResultBoard", () => {
         it("should update player and publish board update", () => {
-            const player = { id: "bot1" };
+            const player = { id: "player1" };
             const bet = { amount: 100, betChoice: "choice1" };
 
             bot.updateAndPublishPlayerResultBoard(player, bet);
 
             expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 100, "choice1");
             expect(mockManager.getBoardData).toHaveBeenCalled();
-            expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ board: "data" });
+            expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
     });
 
@@ -111,7 +111,7 @@ describe("GameBot", () => {
                 100,
                 "choice1",
             );
-            expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ board: "data" });
+            expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
 
         it("should not call update/publish if no valid bots", async () => {

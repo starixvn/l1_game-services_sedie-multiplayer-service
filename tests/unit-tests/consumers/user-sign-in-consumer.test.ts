@@ -24,7 +24,7 @@ jest.mock("../../../src/publishers", () => ({
 
 jest.mock("../../../src/helpers", () => ({
     PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
-        getBoardData: jest.fn().mockReturnValue({ board: "data" }),
+        getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { board: "data" } }),
     })),
 }));
 
@@ -60,6 +60,6 @@ describe("UserSigninConsumer", () => {
         consumer.handleSignInSuccess(mockSocket, mockUserInfo, mockUserSession);
 
         expect(mockManager.getBoardData).toHaveBeenCalled();
-        expect(mockPublisher.publishBoardDataToUser).toHaveBeenCalledWith("user123", { board: "data" });
+        expect(mockPublisher.publishBoardDataToUser).toHaveBeenCalledWith("user123", { playerResultBoard: { board: "data" } });
     });
 });

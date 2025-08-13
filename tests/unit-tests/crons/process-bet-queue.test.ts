@@ -21,7 +21,7 @@ jest.mock("../../../src/publishers", () => ({
 jest.mock("../../../src/helpers", () => ({
     PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
         addOrUpdatePlayer: jest.fn(),
-        getBoardData: jest.fn().mockReturnValue({ board: "data" }),
+        getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { board: "data" } }),
     })),
 }));
 
@@ -60,6 +60,6 @@ describe("ProcessBetQueue", () => {
 
         expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 200, "choice1");
         expect(mockManager.getBoardData).toHaveBeenCalled();
-        expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ board: "data" });
+        expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
     });
 });

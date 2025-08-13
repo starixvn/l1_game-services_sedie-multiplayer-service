@@ -43,7 +43,7 @@ export default class PlayerResultBoardManager {
         const player = playerResultBoard.players[index];
         const { totalBet, totalWin } = this.calculateWinnings(bet, settlementResult, odds);
 
-        player.winAmount = totalWin > 0 ? totalWin : -totalBet;
+        player.winAmount = totalWin - totalBet;
     }
 
     resetForNewRound() {
@@ -54,16 +54,22 @@ export default class PlayerResultBoardManager {
         };
     }
 
+    setSettled() {
+        this.gameData.playerResultBoard.isSettled = true;
+    }
+
     getBoardData() {
         const { playerResultBoard } = this.gameData;
 
         return {
-            roundId: this.gameData.roundId,
-            totalPlayers: playerResultBoard.totalPlayers,
-            players: playerResultBoard.players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
-                uid, name, betAmount, winAmount, lastBetTime
-            })),
-            isSettled: playerResultBoard.isSettled
+            playerResultBoard: {
+                roundId: this.gameData.roundId,
+                totalPlayers: playerResultBoard.totalPlayers,
+                players: playerResultBoard.players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
+                    uid, name, betAmount, winAmount, lastBetTime
+                })),
+                isSettled: playerResultBoard.isSettled
+            }
         };
     }
 

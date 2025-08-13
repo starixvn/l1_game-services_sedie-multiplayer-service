@@ -28,7 +28,8 @@ jest.mock("../../../src/publishers", () => ({
 jest.mock("../../../src/helpers", () => ({
     PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
         updateWinAmounts: jest.fn(),
-        getBoardData: jest.fn(),
+        getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
+        setSettled: jest.fn(),
     })),
 }));
 
@@ -46,7 +47,8 @@ describe("SettleGameRoundConsumer", () => {
         } as unknown as jest.Mocked<PlayerResultBoardPublisher>;
         mockPlayerResultBoardManager = {
             updateWinAmounts: jest.fn(),
-            getBoardData: jest.fn().mockReturnValue({ players: [], totalPlayers: 0 }),
+            getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
+            setSettled: jest.fn(),
         } as unknown as jest.Mocked<PlayerResultBoardManager>;
         mockBetsRepository = {
             find: jest.fn().mockReturnValue({
@@ -108,6 +110,7 @@ describe("SettleGameRoundConsumer", () => {
                 });
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[0]);
+                expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
@@ -122,6 +125,7 @@ describe("SettleGameRoundConsumer", () => {
                 jest.spyOn(settleGameRoundConsumer, "queryBets").mockResolvedValue([]);
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
@@ -136,6 +140,7 @@ describe("SettleGameRoundConsumer", () => {
                 jest.spyOn(settleGameRoundConsumer, "queryBets").mockResolvedValue(null);
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
@@ -195,6 +200,7 @@ describe("SettleGameRoundConsumer", () => {
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledTimes(2);
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[0]);
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[1]);
+                expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
@@ -360,6 +366,38 @@ describe("SettleGameRoundConsumer", () => {
             const result = { choice1: "win" };
             jest.spyOn(settleGameRoundConsumer, "queryBets").mockResolvedValue([]);
             await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
+            expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
+            expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
+        });
+
+        it("should call setSettled before publishing final results when bets exist", async () => {
+            const mockBet = {
+                uid: "player1",
+                odds: { choice1: 2.0 },
+                save: jest.fn().mockResolvedValue(undefined),
+                betChoice: "choice1",
+                amount: 100,
+                siteId: "site1",
+                operatorId: "op1",
+                playerId: "player1",
+                freeBet: false,
+                clientSeed: "seed1",
+                rate: 1.0,
+            };
+            const settlementResult = { choice1: true, choice2: false };
+            const roundId = "round123";
+            const time = new Date();
+            const result = { choice1: "win" };
+            jest.spyOn(settleGameRoundConsumer, "queryBets").mockResolvedValue([mockBet]);
+            jest.spyOn(settleGameRoundConsumer, "calculateBetResult").mockReturnValue({
+                totalWin: 200,
+                totalBetAmount: 100,
+                netWin: 100,
+                totalLost: 0,
+                winningByChoices: { choice1: 200 },
+            });
+            await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
+            expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
             expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
         });
     });

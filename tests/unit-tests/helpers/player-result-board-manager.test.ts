@@ -61,7 +61,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, "choice1");
             const bet = { uid: "u1", choice1: 100, odds: { choice1: 2 } };
             manager.updateWinAmounts({ choice1: true }, bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100);
         });
 
         it("should set negative winAmount if no win", () => {
@@ -83,7 +83,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, "choice1");
             const bet = { uid: "u1", choice1: 100, choice2: 50, odds: { choice1: 2, choice2: 3 } };
             manager.updateWinAmounts({ choice1: true, choice2: true }, bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100*2 + 50*3);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200);
         });
 
         it("should handle calculateWinnings with zero bet", () => {
@@ -99,7 +99,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, "choice1");
             const bet = { uid: "u1", choice1: 100, odds: undefined };
             manager.updateWinAmounts({ choice1: true }, bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100);
         });
     });
 
@@ -113,14 +113,21 @@ describe("PlayerResultBoardManager", () => {
         });
     });
 
+    describe("setSettled", () => {
+        it("should set isSettled to true", () => {
+            manager.setSettled();
+            expect(gameData.playerResultBoard.isSettled).toBe(true);
+        });
+    });
+
     describe("getBoardData", () => {
         it("should get board data", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, "choice1");
             const data = manager.getBoardData();
-            expect(data.roundId).toBe("round1");
-            expect(data.totalPlayers).toBe(1);
-            expect(data.players[0].uid).toBe("u1");
-            expect(data.isSettled).toBe(false);
+            expect(data.playerResultBoard.roundId).toBe("round1");
+            expect(data.playerResultBoard.totalPlayers).toBe(1);
+            expect(data.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data.playerResultBoard.isSettled).toBe(false);
         });
     });
 
