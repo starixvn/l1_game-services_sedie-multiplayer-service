@@ -11,9 +11,11 @@ import {
 } from "sc-game-base/src/core/event-consumers";
 import { GameStatusPublisher, RunningRoundInfoPublisher } from "sc-game-base/src/core/event-publishers";
 import GameManagementApiClientFactory from "sc-game-base/src/core/game-management-api";
+import { PlayerResultBoardPublisher } from "../publishers";
 
 export default class GameCron extends Table.Crons.TableGameCron {
     private readonly playerResultBoardManager: PlayerResultBoardManager;
+    private readonly playerResultBoardPublisher: PlayerResultBoardPublisher;
 
     constructor({
         definition,
@@ -31,6 +33,7 @@ export default class GameCron extends Table.Crons.TableGameCron {
         provablyFairConsumer,
         unsettledRoundConsumer,
         playerResultBoardManager,
+        playerResultBoardPublisher
     }: {
         definition: GameDefinition;
         gameData: GameData;
@@ -47,6 +50,7 @@ export default class GameCron extends Table.Crons.TableGameCron {
         provablyFairConsumer: ProvablyFairConsumer;
         unsettledRoundConsumer: UnsettledRoundConsumer;
         playerResultBoardManager: PlayerResultBoardManager;
+        playerResultBoardPublisher: PlayerResultBoardPublisher;
     }) {
         super({
             definition,
@@ -65,6 +69,7 @@ export default class GameCron extends Table.Crons.TableGameCron {
             unsettledRoundConsumer,
         });
         this.playerResultBoardManager = playerResultBoardManager;
+        this.playerResultBoardPublisher = playerResultBoardPublisher;
     }
 
     isStartingTime(remainingTime: number, durations: { placingBets: number; shakeThePlateDuration: number }) {
@@ -74,5 +79,8 @@ export default class GameCron extends Table.Crons.TableGameCron {
     resetForNewRound() {
         super.resetForNewRound();
         this.playerResultBoardManager.resetForNewRound();
+        
+        const boardData = this.playerResultBoardManager.getBoardData();
+        this.playerResultBoardPublisher.publishBoardUpdate(boardData);
     }
 }

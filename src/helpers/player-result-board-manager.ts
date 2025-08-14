@@ -12,9 +12,11 @@ interface PlayerEntry {
 export default class PlayerResultBoardManager {
     private readonly gameData: GameData;
     private readonly maxPlayers: number = 10;
+    private currentRoundId: number;
 
     constructor(gameData: GameData) {
         this.gameData = gameData;
+        this.currentRoundId = gameData.roundId;
     }
 
     addOrUpdatePlayer(player: any, betAmount: number, betChoice: string) {
@@ -47,6 +49,8 @@ export default class PlayerResultBoardManager {
     }
 
     resetForNewRound() {
+        this.currentRoundId = this.gameData.roundId;
+        
         this.gameData.playerResultBoard = {
             players: [],
             totalPlayers: 0,
@@ -60,10 +64,13 @@ export default class PlayerResultBoardManager {
 
     getBoardData() {
         const { playerResultBoard } = this.gameData;
+        if(this.currentRoundId !== this.gameData.roundId){
+            this.resetForNewRound();
+        }
 
         return {
             playerResultBoard: {
-                roundId: this.gameData.roundId,
+                roundId: this.currentRoundId,
                 totalPlayers: playerResultBoard.totalPlayers,
                 players: playerResultBoard.players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
                     uid, name, betAmount, winAmount, lastBetTime

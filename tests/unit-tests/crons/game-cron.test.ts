@@ -21,6 +21,7 @@ jest.mock("../../../src/helpers", () => ({
 describe("GameCron", () => {
     let gameCron: GameCron;
     let mockPlayerResultBoardManager: jest.Mocked<PlayerResultBoardManager>;
+    let mockPlayerResultBoardPublisher: any;
 
     beforeEach(() => {
         // Arrange
@@ -28,9 +29,13 @@ describe("GameCron", () => {
             resetForNewRound: jest.fn(),
             addOrUpdatePlayer: jest.fn(),
             updateWinAmounts: jest.fn(),
-            getBoardData: jest.fn(),
+            getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { board: "data" } }),
             countTotalPlayers: jest.fn(),
         } as unknown as jest.Mocked<PlayerResultBoardManager>;
+        
+        mockPlayerResultBoardPublisher = {
+            publishBoardUpdate: jest.fn(),
+        };
         
         gameCron = new GameCron({
             definition: {} as any,
@@ -48,6 +53,7 @@ describe("GameCron", () => {
             provablyFairConsumer: {} as any,
             unsettledRoundConsumer: {} as any,
             playerResultBoardManager: mockPlayerResultBoardManager,
+            playerResultBoardPublisher: mockPlayerResultBoardPublisher,
         });
     });
 
@@ -103,6 +109,8 @@ describe("GameCron", () => {
             // Arrange
             const superResetSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(gameCron)), 'resetForNewRound');
             const playerResultBoardResetSpy = jest.spyOn(mockPlayerResultBoardManager, 'resetForNewRound');
+            const getBoardDataSpy = jest.spyOn(mockPlayerResultBoardManager, 'getBoardData');
+            const publishBoardUpdateSpy = jest.spyOn(mockPlayerResultBoardPublisher, 'publishBoardUpdate');
 
             // Act
             gameCron.resetForNewRound();
@@ -110,6 +118,8 @@ describe("GameCron", () => {
             // Assert
             expect(superResetSpy).toHaveBeenCalled();
             expect(playerResultBoardResetSpy).toHaveBeenCalled();
+            expect(getBoardDataSpy).toHaveBeenCalled();
+            expect(publishBoardUpdateSpy).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
     });
 });

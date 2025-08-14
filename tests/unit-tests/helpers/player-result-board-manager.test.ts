@@ -129,6 +129,22 @@ describe("PlayerResultBoardManager", () => {
             expect(data.playerResultBoard.players[0].uid).toBe("u1");
             expect(data.playerResultBoard.isSettled).toBe(false);
         });
+
+        it("should get board data when roundId has not changed", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, "choice1");
+            const data = manager.getBoardData();
+            expect(data.playerResultBoard.roundId).toBe("round1");
+            expect(data.playerResultBoard.totalPlayers).toBe(1);
+            expect(data.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data.playerResultBoard.isSettled).toBe(false);
+        });
+    
+        it("should reset for new round if roundId has changed", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, "choice1");
+            gameData.roundId = "round2";
+            const data = manager.getBoardData();
+            expect(data.playerResultBoard.players.length).toBe(1);
+        });
     });
 
     describe("countTotalPlayers", () => {
