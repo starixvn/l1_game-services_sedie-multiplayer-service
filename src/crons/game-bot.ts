@@ -25,7 +25,7 @@ export default class GameBot extends Table.Crons.TableGameConfigBot {
     }
 
     updateAndPublishPlayerResultBoard(player: any, bet: any) {
-        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount, bet.betChoice);
+        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount);
         const boardData = this.playerResultBoardManager.getBoardData();
         this.playerResultBoardPublisher.publishBoardUpdate(boardData);
     }

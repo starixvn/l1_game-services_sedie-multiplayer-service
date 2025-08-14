@@ -29,6 +29,7 @@ jest.mock("../../../src/helpers", () => ({
     PlayerResultBoardManager: jest.fn().mockImplementation(() => ({
         updateWinAmounts: jest.fn(),
         getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
+        getBoardDataByRoundId: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
         setSettled: jest.fn(),
     })),
 }));
@@ -48,6 +49,7 @@ describe("SettleGameRoundConsumer", () => {
         mockPlayerResultBoardManager = {
             updateWinAmounts: jest.fn(),
             getBoardData: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
+            getBoardDataByRoundId: jest.fn().mockReturnValue({ playerResultBoard: { players: [], totalPlayers: 0 } }),
             setSettled: jest.fn(),
         } as unknown as jest.Mocked<PlayerResultBoardManager>;
         mockBetsRepository = {
@@ -94,6 +96,7 @@ describe("SettleGameRoundConsumer", () => {
                         freeBet: false,
                         clientSeed: "seed1",
                         rate: 1.0,
+                        betwin: 200,
                     },
                 ];
                 const settlementResult = { choice1: true, choice2: false };
@@ -109,9 +112,9 @@ describe("SettleGameRoundConsumer", () => {
                     winningByChoices: { choice1: 200 },
                 });
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
-                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[0]);
+                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -126,7 +129,7 @@ describe("SettleGameRoundConsumer", () => {
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -141,7 +144,7 @@ describe("SettleGameRoundConsumer", () => {
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -161,6 +164,7 @@ describe("SettleGameRoundConsumer", () => {
                         freeBet: false,
                         clientSeed: "seed1",
                         rate: 1.0,
+                        betwin: 200,
                     },
                     {
                         uid: "player2",
@@ -174,6 +178,7 @@ describe("SettleGameRoundConsumer", () => {
                         freeBet: true,
                         clientSeed: "seed2",
                         rate: 1.0,
+                        betwin: 0,
                     },
                 ];
                 const settlementResult = { choice1: true, choice2: false };
@@ -198,10 +203,10 @@ describe("SettleGameRoundConsumer", () => {
                     });
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledTimes(2);
-                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[0]);
-                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(settlementResult, mockBets[1]);
+                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
+                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[1]);
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });

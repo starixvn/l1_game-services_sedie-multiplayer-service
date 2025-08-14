@@ -70,12 +70,12 @@ export default class SettleGameRoundConsumer extends Table.EventConsumers.TableS
 
                     this.captureBetResult(bet.uid, betResult, bet.rate);
                     await this.userBetResultPublisher.publish(bet.uid, betResult);
-                    this.playerResultBoardManager.updateWinAmounts(settlementResult, bet);
+                    this.playerResultBoardManager.updateWinAmounts(bet);
                 })
             );
         }
         this.playerResultBoardManager.setSettled();
-        const boardData = this.playerResultBoardManager.getBoardData();
+        const boardData = this.playerResultBoardManager.getBoardDataByRoundId(roundId);
         this.playerResultBoardPublisher.publishFinalResults(boardData);
     }
 }

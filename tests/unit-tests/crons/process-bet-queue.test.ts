@@ -58,7 +58,7 @@ describe("ProcessBetQueue", () => {
 
         await processBetQueue.handleSuccessBet(player, balance, roundId, bet);
 
-        expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 200, "choice1");
+        expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 200);
         expect(mockManager.getBoardData).toHaveBeenCalled();
         expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
     });

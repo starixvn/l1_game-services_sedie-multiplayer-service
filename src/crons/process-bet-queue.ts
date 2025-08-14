@@ -58,7 +58,7 @@ export default class ProcessBetQueue extends Table.Crons.TableProcessBetQueue {
     async handleSuccessBet(player: any, balance: any, roundId: any, bet: any) {
         await super.handleSuccessBet(player, balance, roundId, bet);
 
-        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount, bet.betChoice);
+        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount);
         const boardData = this.playerResultBoardManager.getBoardData();
         this.playerResultBoardPublisher.publishBoardUpdate(boardData);
     }

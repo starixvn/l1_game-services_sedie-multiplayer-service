@@ -81,7 +81,7 @@ describe("GameBot", () => {
 
             bot.updateAndPublishPlayerResultBoard(player, bet);
 
-            expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 100, "choice1");
+            expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 100);
             expect(mockManager.getBoardData).toHaveBeenCalled();
             expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
@@ -109,7 +109,6 @@ describe("GameBot", () => {
             expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(
                 expect.objectContaining({ id: "bot1", clientSeed: "seed" }),
                 100,
-                "choice1",
             );
             expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
