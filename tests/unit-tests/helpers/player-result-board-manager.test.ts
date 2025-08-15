@@ -143,6 +143,7 @@ describe("PlayerResultBoardManager", () => {
             const data = manager.getBoardData();
             expect(data.playerResultBoard.totalPlayers).toBe(1);
             expect(data.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
             expect(data.playerResultBoard.isSettled).toBe(false);
         });
 
@@ -151,6 +152,7 @@ describe("PlayerResultBoardManager", () => {
             const data = manager.getBoardData();
             expect(data.playerResultBoard.totalPlayers).toBe(1);
             expect(data.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
             expect(data.playerResultBoard.isSettled).toBe(false);
         });
     
@@ -161,9 +163,7 @@ describe("PlayerResultBoardManager", () => {
             
             const data = manager.getBoardData();
             
-            // clearDataOldRound filters out players with old roundId, so players array should be empty
             expect(data.playerResultBoard.players.length).toBe(0);
-            // totalPlayers remains unchanged because clearDataOldRound only filters players array
             expect(data.playerResultBoard.totalPlayers).toBe(1);
             expect(data.playerResultBoard.isSettled).toBe(false);
         });
@@ -183,7 +183,33 @@ describe("PlayerResultBoardManager", () => {
             const data = manager.getBoardData(1);
             expect(data.playerResultBoard.totalPlayers).toBe(1);
             expect(data.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
             expect(data.playerResultBoard.isSettled).toBe(false);
+        });
+
+        it("should mask player names correctly in board data", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "JohnSmith" } }, 100, 1);
+            manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Alice" } }, 200, 1);
+            manager.addOrUpdatePlayer({ UID: "u3", profile: { name: "Bob" } }, 300, 1);
+            manager.addOrUpdatePlayer({ UID: "u4", profile: { name: "A" } }, 400, 1);
+            manager.addOrUpdatePlayer({ UID: "u5", profile: { name: "AB" } }, 500, 1);
+            manager.addOrUpdatePlayer({ UID: "u6", profile: { name: "ABC" } }, 600, 1);
+            manager.addOrUpdatePlayer({ UID: "u7", profile: { name: "ABCD" } }, 700, 1);
+
+            const data = manager.getBoardData();
+            const players = data.playerResultBoard.players;
+
+            const maskedNames = players.map(p => p.name);
+            
+            expect(maskedNames).toContain("J***ith"); 
+            expect(maskedNames).toContain("A***ice");
+            expect(maskedNames).toContain("B***ob");
+            expect(maskedNames).toContain("A");
+            expect(maskedNames).toContain("AB");
+            expect(maskedNames).toContain("A***BC");
+            expect(maskedNames).toContain("A***BCD");
+            
+            expect(players.length).toBe(7);
         });
     });
 
