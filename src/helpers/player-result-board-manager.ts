@@ -2,6 +2,7 @@ import GameData from "../game-data";
 
 interface PlayerEntry {
     uid: string;
+    roundId: number;
     name: string;
     betAmount: number;
     lastBetTime: Date;
@@ -11,14 +12,17 @@ interface PlayerEntry {
 export default class PlayerResultBoardManager {
     private readonly gameData: GameData;
     private readonly maxPlayers: number = 10;
-    private currentRoundId: number;
 
     constructor(gameData: GameData) {
         this.gameData = gameData;
-        this.currentRoundId = gameData.roundId;
     }
 
-    addOrUpdatePlayer(player: any, betAmount: number) {
+    addOrUpdatePlayer(player: any, betAmount: number, roundId: number) {
+        if (roundId !== this.gameData.roundId) {
+            console.log("addOrUpdatePlayer -ROUND IDS ARE NOT THE SAME", "ROUND ID: ", roundId, "DATA.ROUND ID: ", this.gameData.roundId);
+            return;
+        }
+
         const { playerResultBoard } = this.gameData;
         const uid = player.UID || player.id;
         const name = player.profile?.name || player.name;
@@ -28,7 +32,7 @@ export default class PlayerResultBoardManager {
         if (index !== -1) {
             this.updateExistingPlayer(index, betAmount);
         } else {
-            this.addNewPlayer(uid, name, betAmount);
+            this.addNewPlayer(uid, name, betAmount, roundId);
         }
     }
 
@@ -45,7 +49,7 @@ export default class PlayerResultBoardManager {
     }
 
     resetForNewRound() {
-        this.currentRoundId = this.gameData.roundId;
+        console.log("CALLED RESET FOR NEW ROUND: ", this.gameData.roundId);
 
         this.gameData.playerResultBoard = {
             players: [],
@@ -58,15 +62,16 @@ export default class PlayerResultBoardManager {
         this.gameData.playerResultBoard.isSettled = true;
     }
 
-    private buildBoardData(roundId: number) {
+    getBoardData(roundId?: number) {
+        this.clearDataOldRound();
         const { totalPlayers, players, isSettled } = this.gameData.playerResultBoard;
-    
+
         return {
             playerResultBoard: {
-                roundId,
                 totalPlayers,
                 players: players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
                     uid,
+                    roundId: roundId || this.gameData.roundId,
                     name,
                     betAmount,
                     winAmount,
@@ -76,20 +81,10 @@ export default class PlayerResultBoardManager {
             },
         };
     }
-    
-    getBoardData() {
-        if (this.currentRoundId !== this.gameData.roundId) {
-            this.resetForNewRound();
-        }
-        return this.buildBoardData(this.currentRoundId);
-    }
-    
-    getBoardDataByRoundId(roundId: number) {
-        return this.buildBoardData(roundId);
-    }
-        
-    countTotalPlayers() {
-        return this.gameData.playerResultBoard.totalPlayers || 0;
+
+    private clearDataOldRound() {
+        const { playerResultBoard } = this.gameData;
+        playerResultBoard.players = playerResultBoard.players.filter((player) => player.roundId === this.gameData.roundId);
     }
 
     private updateExistingPlayer(index: number, betAmount: number) {
@@ -103,11 +98,12 @@ export default class PlayerResultBoardManager {
         players.unshift(player);
     }
 
-    private addNewPlayer(uid: string, name: string, betAmount: number) {
+    private addNewPlayer(uid: string, name: string, betAmount: number, roundId: number) {
         const { playerResultBoard } = this.gameData;
 
         const newPlayer: PlayerEntry = {
             uid,
+            roundId,
             name,
             betAmount,
             lastBetTime: new Date(),

@@ -25,7 +25,7 @@ export default class GameBot extends Table.Crons.TableGameConfigBot {
     }
 
     updateAndPublishPlayerResultBoard(player: any, bet: any) {
-        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount);
+        this.playerResultBoardManager.addOrUpdatePlayer(player, bet.amount, this.gameData.roundId);
         const boardData = this.playerResultBoardManager.getBoardData();
         this.playerResultBoardPublisher.publishBoardUpdate(boardData);
     }
@@ -45,7 +45,6 @@ export default class GameBot extends Table.Crons.TableGameConfigBot {
             this.updateBotInRoomData(bot, choice, amount, validBot.red);
             this.updateBalanceAndPublishBetPayload(bot.id, choice, amount, validBot.red);
             
-            console.log("Bot bet called at", new Date(), "roundId", this.gameData.roundId, "remaining time", this.gameData.remainingTime);
             this.updateAndPublishPlayerResultBoard(bot, bet);
         });
     }

@@ -60,7 +60,7 @@ describe("GameBot", () => {
 
         bot = new GameBot(
             {} as any,
-            {} as any,
+            { roundId: "round123" } as any,
             {} as any,
             mockApiFactory,
             tempBetsRepository,
@@ -68,6 +68,8 @@ describe("GameBot", () => {
             mockManager
         );
         bot.gameManagementApiClient = mockApiFactory;
+        // Set the gameData property that the parent class should have set
+        (bot as any).gameData = { roundId: "round123" };
     });
 
     afterEach(() => {
@@ -81,7 +83,7 @@ describe("GameBot", () => {
 
             bot.updateAndPublishPlayerResultBoard(player, bet);
 
-            expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 100);
+            expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(player, 100, "round123");
             expect(mockManager.getBoardData).toHaveBeenCalled();
             expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });
@@ -109,6 +111,7 @@ describe("GameBot", () => {
             expect(mockManager.addOrUpdatePlayer).toHaveBeenCalledWith(
                 expect.objectContaining({ id: "bot1", clientSeed: "seed" }),
                 100,
+                "round123"
             );
             expect(mockPublisher.publishBoardUpdate).toHaveBeenCalledWith({ playerResultBoard: { board: "data" } });
         });

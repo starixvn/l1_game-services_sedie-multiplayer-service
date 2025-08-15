@@ -75,7 +75,7 @@ export default class SettleGameRoundConsumer extends Table.EventConsumers.TableS
             );
         }
         this.playerResultBoardManager.setSettled();
-        const boardData = this.playerResultBoardManager.getBoardDataByRoundId(roundId);
+        const boardData = this.playerResultBoardManager.getBoardData(roundId);
         this.playerResultBoardPublisher.publishFinalResults(boardData);
     }
 }

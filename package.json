@@ -34,9 +34,11 @@
         "sc-instrument": "1.1.1"
     },
     "resolutions": {
+        "sc-game-base": "4.0.0",
         "mongoose": "6.13.6",
-        "sc-instrument": "1.1.1",
-        "form-data": "4.0.4"
+        "form-data": "4.0.4",
+        "sc-common": "2.0.0",
+        "sc-instrument": "1.1.1"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.23.9",

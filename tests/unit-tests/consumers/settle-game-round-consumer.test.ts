@@ -114,7 +114,7 @@ describe("SettleGameRoundConsumer", () => {
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalledWith(roundId);
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -129,7 +129,7 @@ describe("SettleGameRoundConsumer", () => {
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalledWith(roundId);
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -144,7 +144,7 @@ describe("SettleGameRoundConsumer", () => {
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).not.toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalledWith(roundId);
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
@@ -203,10 +203,10 @@ describe("SettleGameRoundConsumer", () => {
                     });
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledTimes(2);
-                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
+            expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[1]);
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
-                expect(mockPlayerResultBoardManager.getBoardDataByRoundId).toHaveBeenCalled();
+                expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalledWith(roundId);
                 expect(mockPlayerResultBoardPublisher.publishFinalResults).toHaveBeenCalled();
             });
         });
