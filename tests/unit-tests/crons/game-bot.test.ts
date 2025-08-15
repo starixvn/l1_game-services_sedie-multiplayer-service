@@ -70,6 +70,15 @@ describe("GameBot", () => {
         bot.gameManagementApiClient = mockApiFactory;
         // Set the gameData property that the parent class should have set
         (bot as any).gameData = { roundId: "round123" };
+        
+        // Mock calculateBet method by default
+        bot.calculateBet = jest.fn().mockImplementation((bot: any) => ({
+            id: bot.id,
+            amount: 100,
+            bot: bot,
+            choice: "choice1",
+            currentBet: {},
+        }));
     });
 
     afterEach(() => {
@@ -92,15 +101,6 @@ describe("GameBot", () => {
     describe("placeBets", () => {
         it("should place bets for valid bots and update/publish result board", async () => {
             // Arrange
-            bot.calculateBet = jest.fn().mockImplementation((bot: any) => ({
-                id: bot.id,
-                amount: 100,
-                betChoice: "choice1",
-                bot,
-                choice: "choice1",
-                currentBet: {},
-            }));
-
             const botsToBet = [{ id: "bot1" }];
 
             // Act
@@ -119,10 +119,14 @@ describe("GameBot", () => {
         it("should not call update/publish if no valid bots", async () => {
             // Arrange
             bot.calculateBet = jest.fn().mockReturnValue(null);
+            mockApiFactory.users.updateBotsBalance = jest.fn().mockResolvedValue([]);
 
             const botsToBet = [{ id: "bot2" }];
 
             // Act
+            await bot.placeBets(botsToBet);
+
+            // Assert
             expect(mockPublisher.publishBoardUpdate).not.toHaveBeenCalled();
         });
     });    

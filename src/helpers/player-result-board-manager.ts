@@ -63,7 +63,7 @@ export default class PlayerResultBoardManager {
     }
 
     getBoardData(roundId?: number) {
-        this.clearDataOldRound();
+        this.filterPlayersByRound(roundId);
         const { totalPlayers, players, isSettled } = this.gameData.playerResultBoard;
 
         return {
@@ -82,9 +82,12 @@ export default class PlayerResultBoardManager {
         };
     }
 
-    private clearDataOldRound() {
+    private filterPlayersByRound(roundId?: number) {
+        const currentRoundId = roundId || this.gameData.roundId;
         const { playerResultBoard } = this.gameData;
-        playerResultBoard.players = playerResultBoard.players.filter((player) => player.roundId === this.gameData.roundId);
+        playerResultBoard.players = playerResultBoard.players.filter(
+            (player) => player.roundId === currentRoundId
+        );
     }
 
     private updateExistingPlayer(index: number, betAmount: number) {
