@@ -19,7 +19,6 @@ export default class PlayerResultBoardManager {
 
     addOrUpdatePlayer(player: any, betAmount: number, roundId: number) {
         if (roundId !== this.gameData.roundId) {
-            console.log("addOrUpdatePlayer -ROUND IDS ARE NOT THE SAME", "ROUND ID: ", roundId, "DATA.ROUND ID: ", this.gameData.roundId);
             return;
         }
 
@@ -49,8 +48,6 @@ export default class PlayerResultBoardManager {
     }
 
     resetForNewRound() {
-        console.log("CALLED RESET FOR NEW ROUND: ", this.gameData.roundId);
-
         this.gameData.playerResultBoard = {
             players: [],
             totalPlayers: 0,
@@ -63,15 +60,18 @@ export default class PlayerResultBoardManager {
     }
 
     getBoardData(roundId?: number) {
+        if (roundId !== undefined && roundId !== this.gameData.roundId && !this.gameData.playerResultBoard.isSettled) {
+            this.resetForNewRound();
+        }
         this.filterPlayersByRound(roundId);
         const { totalPlayers, players, isSettled } = this.gameData.playerResultBoard;
 
         return {
             playerResultBoard: {
+                roundId: roundId || this.gameData.roundId,
                 totalPlayers,
                 players: players.map(({ uid, name, betAmount, winAmount, lastBetTime }) => ({
                     uid,
-                    roundId: roundId || this.gameData.roundId,
                     name: this.maskPlayerName(name),
                     betAmount,
                     winAmount,
@@ -83,11 +83,14 @@ export default class PlayerResultBoardManager {
     }
 
     private filterPlayersByRound(roundId?: number) {
-        const currentRoundId = roundId || this.gameData.roundId;
+        const currentRoundId = roundId ?? this.gameData.roundId;
         const { playerResultBoard } = this.gameData;
-        playerResultBoard.players = playerResultBoard.players.filter(
-            (player) => player.roundId === currentRoundId
-        );
+        playerResultBoard.players = playerResultBoard.players.filter((player) => player.roundId === currentRoundId);
+
+        const currentCount = playerResultBoard.players.length;
+        if(currentCount < this.maxPlayers) {
+            playerResultBoard.totalPlayers = currentCount;
+        }
     }
 
     private updateExistingPlayer(index: number, betAmount: number) {
@@ -134,7 +137,7 @@ export default class PlayerResultBoardManager {
 
         const firstChar = name.charAt(0);
         const lastThreeChars = name.slice(-3);
-        
+
         return `${firstChar}***${lastThreeChars}`;
     }
 }

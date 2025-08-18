@@ -49,20 +49,8 @@ describe("PlayerResultBoardManager", () => {
 
         it("should not add player when roundId does not match", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
-            const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-            
-            manager.addOrUpdatePlayer(player, 100, 2); // Different roundId
-            
+            manager.addOrUpdatePlayer(player, 100, 2);
             expect(gameData.playerResultBoard.players.length).toBe(0);
-            expect(consoleSpy).toHaveBeenCalledWith(
-                "addOrUpdatePlayer -ROUND IDS ARE NOT THE SAME",
-                "ROUND ID: ",
-                2,
-                "DATA.ROUND ID: ",
-                1
-            );
-            
-            consoleSpy.mockRestore();
         });
     });
 
@@ -118,14 +106,13 @@ describe("PlayerResultBoardManager", () => {
         it("should reset for new round", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-            
+
             manager.resetForNewRound();
-            
+
             expect(gameData.playerResultBoard.players.length).toBe(0);
             expect(gameData.playerResultBoard.totalPlayers).toBe(0);
             expect(gameData.playerResultBoard.isSettled).toBe(false);
-            expect(consoleSpy).toHaveBeenCalledWith("CALLED RESET FOR NEW ROUND: ", 1);
-            
+
             consoleSpy.mockRestore();
         });
     });
@@ -138,53 +125,75 @@ describe("PlayerResultBoardManager", () => {
     });
 
     describe("getBoardData", () => {
+        it("should get board data normally when no roundId passed", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            const data = manager.getBoardData();
+            expect(data?.playerResultBoard.totalPlayers).toBe(1);
+            expect(data?.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data?.playerResultBoard.players[0].name).toBe("A***ice");
+            expect(data?.playerResultBoard.isSettled).toBe(false);
+        });
+
+        it("should return board data when roundId changed and not settled", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            const data = manager.getBoardData(2);
+            expect(data).toBeDefined();
+            expect(gameData.playerResultBoard.players.length).toBe(0);
+            expect(gameData.playerResultBoard.totalPlayers).toBe(0);
+            expect(gameData.playerResultBoard.isSettled).toBe(false);
+        });
+
+        it("should still return board data if roundId is the same", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            const data = manager.getBoardData(1);
+            expect(data).toBeDefined();
+            expect(data?.playerResultBoard.players[0].uid).toBe("u1");
+        });
+
         it("should get board data", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             const data = manager.getBoardData();
-            expect(data.playerResultBoard.totalPlayers).toBe(1);
-            expect(data.playerResultBoard.players[0].uid).toBe("u1");
-            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
-            expect(data.playerResultBoard.isSettled).toBe(false);
+            expect(data?.playerResultBoard.totalPlayers).toBe(1);
+            expect(data?.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data?.playerResultBoard.players[0].name).toBe("A***ice");
+            expect(data?.playerResultBoard.isSettled).toBe(false);
         });
 
         it("should get board data when roundId has not changed", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             const data = manager.getBoardData();
-            expect(data.playerResultBoard.totalPlayers).toBe(1);
-            expect(data.playerResultBoard.players[0].uid).toBe("u1");
-            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
-            expect(data.playerResultBoard.isSettled).toBe(false);
+            expect(data?.playerResultBoard.totalPlayers).toBe(1);
+            expect(data?.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data?.playerResultBoard.players[0].name).toBe("A***ice");
+            expect(data?.playerResultBoard.isSettled).toBe(false);
         });
-    
+
         it("should reset for new round if roundId has changed", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
-            
             gameData.roundId = 2;
-            
             const data = manager.getBoardData();
-            
-            expect(data.playerResultBoard.players.length).toBe(0);
-            expect(data.playerResultBoard.totalPlayers).toBe(1);
-            expect(data.playerResultBoard.isSettled).toBe(false);
+            expect(data?.playerResultBoard.players.length).toBe(0);
+            expect(data?.playerResultBoard.totalPlayers).toBe(0);
+            expect(data?.playerResultBoard.isSettled).toBe(false);
         });
 
         it("should return correct data structure", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             const data = manager.getBoardData();
-            expect(data).toHaveProperty('playerResultBoard');
-            expect(data.playerResultBoard).toHaveProperty('totalPlayers');
-            expect(data.playerResultBoard).toHaveProperty('players');
-            expect(data.playerResultBoard).toHaveProperty('isSettled');
-            expect(Array.isArray(data.playerResultBoard.players)).toBe(true);
+            expect(data).toHaveProperty("playerResultBoard");
+            expect(data?.playerResultBoard).toHaveProperty("totalPlayers");
+            expect(data?.playerResultBoard).toHaveProperty("players");
+            expect(data?.playerResultBoard).toHaveProperty("isSettled");
+            expect(Array.isArray(data?.playerResultBoard.players)).toBe(true);
         });
 
         it("should get board data with specific roundId", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             const data = manager.getBoardData(1);
-            expect(data.playerResultBoard.totalPlayers).toBe(1);
-            expect(data.playerResultBoard.players[0].uid).toBe("u1");
-            expect(data.playerResultBoard.players[0].name).toBe("A***ice");
-            expect(data.playerResultBoard.isSettled).toBe(false);
+            expect(data?.playerResultBoard.totalPlayers).toBe(1);
+            expect(data?.playerResultBoard.players[0].uid).toBe("u1");
+            expect(data?.playerResultBoard.players[0].name).toBe("A***ice");
+            expect(data?.playerResultBoard.isSettled).toBe(false);
         });
 
         it("should mask player names correctly in board data", () => {
@@ -197,19 +206,98 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer({ UID: "u7", profile: { name: "ABCD" } }, 700, 1);
 
             const data = manager.getBoardData();
-            const players = data.playerResultBoard.players;
-
-            const maskedNames = players.map(p => p.name);
-            
-            expect(maskedNames).toContain("J***ith"); 
+            const players = data?.playerResultBoard.players;
+            const maskedNames = players?.map((p) => p.name);
+            expect(maskedNames).toContain("J***ith");
             expect(maskedNames).toContain("A***ice");
             expect(maskedNames).toContain("B***ob");
             expect(maskedNames).toContain("A");
             expect(maskedNames).toContain("AB");
             expect(maskedNames).toContain("A***BC");
             expect(maskedNames).toContain("A***BCD");
+
+            expect(players?.length).toBe(7);
+        });
+    });
+
+    describe("filterPlayersByRound", () => {
+        it("should filter players by roundId and update totalPlayers when filtered count is less than maxPlayers", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
             
-            expect(players.length).toBe(7);
+            expect(gameData.playerResultBoard.totalPlayers).toBe(2);
+            const result1 = manager.getBoardData(1);
+            expect(result1?.playerResultBoard.players.length).toBe(2);
+            expect(result1?.playerResultBoard.totalPlayers).toBe(2);
+            gameData.roundId = 2;
+            manager.addOrUpdatePlayer({ UID: "u3", profile: { name: "Charlie" } }, 300, 2);
+            manager.addOrUpdatePlayer({ UID: "u4", profile: { name: "David" } }, 400, 2);
+            manager.addOrUpdatePlayer({ UID: "u5", profile: { name: "Eve" } }, 500, 2);
+            
+            const result2 = manager.getBoardData(2);
+            expect(result2?.playerResultBoard.players.length).toBe(3);
+            expect(result2?.playerResultBoard.totalPlayers).toBe(3);
+        });
+
+        it("should not update totalPlayers when filtered count equals maxPlayers", () => {
+            for (let i = 0; i < 10; i++) {
+                manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
+            }
+            expect(gameData.playerResultBoard.totalPlayers).toBe(10);
+            gameData.playerResultBoard.totalPlayers = 5;
+            const result = manager.getBoardData(1);
+            expect(result?.playerResultBoard.players.length).toBe(10);
+            expect(result?.playerResultBoard.totalPlayers).toBe(5);
+        });
+
+        it("should not update totalPlayers when filtered count is greater than maxPlayers", () => {
+            for (let i = 0; i < 11; i++) {
+                manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
+            }
+            
+            expect(gameData.playerResultBoard.totalPlayers).toBe(11);
+            gameData.playerResultBoard.totalPlayers = 5;
+            const result = manager.getBoardData(1);
+            expect(result?.playerResultBoard.players.length).toBe(10);
+            expect(result?.playerResultBoard.totalPlayers).toBe(5);
+        });
+
+        it("should handle filtering when no players exist for the specified round", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
+            
+            gameData.playerResultBoard.totalPlayers = 2;
+            const result = manager.getBoardData(999);
+            expect(result?.playerResultBoard.players.length).toBe(0);
+            expect(result?.playerResultBoard.totalPlayers).toBe(0);
+            expect(gameData.playerResultBoard.players.length).toBe(0);
+        });
+
+        it("should use nullish coalescing operator for roundId fallback", () => {
+            manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
+            manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
+            
+            manager.getBoardData(undefined);
+            expect(gameData.playerResultBoard.players.length).toBe(2);
+            expect(gameData.playerResultBoard.players[0].roundId).toBe(1);
+            expect(gameData.playerResultBoard.players[1].roundId).toBe(1);
+        });
+
+        it("should test filterPlayersByRound behavior with maxPlayers boundary", () => {
+            for (let i = 0; i < 10; i++) {
+                manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
+            }
+            
+            gameData.playerResultBoard.totalPlayers = 1;
+            const result1 = manager.getBoardData(1);
+            expect(result1?.playerResultBoard.players.length).toBe(10);
+            expect(result1?.playerResultBoard.totalPlayers).toBe(1);
+            
+            manager.resetForNewRound();
+            gameData.roundId = 2;
+            const result2 = manager.getBoardData(2);
+            expect(result2?.playerResultBoard.players.length).toBe(0);
+            expect(result2?.playerResultBoard.totalPlayers).toBe(0);
         });
     });
 
@@ -262,7 +350,7 @@ describe("PlayerResultBoardManager", () => {
             }
             expect(gameData.playerResultBoard.players.length).toBe(10);
             expect(gameData.playerResultBoard.totalPlayers).toBe(11);
-            const uids = gameData.playerResultBoard.players.map(p => p.uid);
+            const uids = gameData.playerResultBoard.players.map((p) => p.uid);
             expect(uids).not.toContain("u0");
         });
     });
