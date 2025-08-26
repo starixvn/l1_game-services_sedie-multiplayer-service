@@ -1,5 +1,5 @@
 {
-    "name": "mini-roulette-service",
+    "name": "sedie-multiplayer-service",
     "version": "1.0.0",
     "description": "",
     "main": "./build/app.js",
@@ -34,7 +34,6 @@
         "sc-instrument": "1.1.1"
     },
     "resolutions": {
-        "sc-game-base": "4.0.0",
         "mongoose": "6.13.6",
         "form-data": "4.0.4",
         "sc-common": "2.0.0",
