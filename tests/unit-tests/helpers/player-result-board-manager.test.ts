@@ -16,6 +16,14 @@ describe("PlayerResultBoardManager", () => {
             gameConfigs: {
                 odds: { choice1: 2, choice2: 3 },
             },
+            exchangeRates: {
+                code: {
+                    USD: 1.0,
+                    EUR: 0.85,
+                    JPY: 110.0,
+                    KRW: 1200.0,
+                }
+            }
         } as any;
         manager = new PlayerResultBoardManager(gameData);
     });
@@ -51,6 +59,163 @@ describe("PlayerResultBoardManager", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 2);
             expect(gameData.playerResultBoard.players.length).toBe(0);
+        });
+
+        it("should apply currency rate when player has session with multiplier and currency", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 2.0, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(200); // 100 * 2.0
+        });
+
+        it("should apply currency rate when player has session with different currency", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 1.5, currencyCode: "EUR" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(127.5, 10); // 100 * 1.5 * 0.85
+        });
+
+        it("should handle session with multiplier but no currency code", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 2.0 }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * 2.0 * undefined = NaN, falls back to 1
+        });
+
+        it("should handle session with currency code but no multiplier", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * undefined * 1.0 = NaN, falls back to 1
+        });
+
+        it("should handle session with invalid multiplier (NaN)", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: "invalid", currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
+        });
+
+        it("should handle session with invalid currency rate (NaN)", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 2.0, currencyCode: "INVALID" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
+        });
+
+        it("should handle player with no session", () => {
+            const player = { UID: "u1", profile: { name: "Alice" } };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // No session, rate defaults to 1
+        });
+
+        it("should handle player with empty session object", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: {}
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // Empty session, rate defaults to 1
+        });
+
+        it("should apply rate to existing player updates", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 2.0, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            manager.addOrUpdatePlayer(player, 50, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(300); // (100 * 2) + (50 * 2)
+        });
+
+        it("should handle complex currency calculations", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 0.5, currencyCode: "JPY" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(5500, 10); // 100 * 0.5 * 110.0
+        });
+
+        it("should handle zero multiplier", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 0, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(0); // 100 * 0 * 1.0
+        });
+
+        it("should handle negative multiplier", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: -1, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(-100); // 100 * -1 * 1.0
+        });
+
+        it("should handle very small multiplier values", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 0.001, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(0.1, 10); // 100 * 0.001 * 1.0
+        });
+
+        it("should handle very large multiplier values", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 1000, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100000); // 100 * 1000 * 1.0
+        });
+
+        it("should handle session with null values", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: null, currencyCode: null }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // null values result in NaN, fallback to 1
+        });
+
+        it("should handle session with undefined values", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: undefined, currencyCode: undefined }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // undefined values result in NaN, fallback to 1
         });
     });
 

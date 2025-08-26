@@ -22,16 +22,20 @@ export default class PlayerResultBoardManager {
             return;
         }
 
+        const rate = this.calculateCurrencyRate(player.session);
+
         const { playerResultBoard } = this.gameData;
         const uid = player.UID || player.id;
         const name = player.profile?.name || player.name;
 
         const index = playerResultBoard.players.findIndex((p) => p.uid === uid);
 
+        const betAmountByRate = betAmount * rate;
+
         if (index !== -1) {
-            this.updateExistingPlayer(index, betAmount);
+            this.updateExistingPlayer(index, betAmountByRate);
         } else {
-            this.addNewPlayer(uid, name, betAmount, roundId);
+            this.addNewPlayer(uid, name, betAmountByRate, roundId);
         }
     }
 
@@ -105,7 +109,7 @@ export default class PlayerResultBoardManager {
     }
 
     private addNewPlayer(uid: string, name: string, betAmount: number, roundId: number) {
-        const { playerResultBoard } = this.gameData;
+        const { playerResultBoard} = this.gameData;
 
         const newPlayer: PlayerEntry = {
             uid,
@@ -139,5 +143,10 @@ export default class PlayerResultBoardManager {
         const lastThreeChars = name.slice(-3);
 
         return `${firstChar}***${lastThreeChars}`;
+    }
+
+    private calculateCurrencyRate(session: any) {
+        const rate = session?.multiplier * this.gameData.exchangeRates.code[session?.currencyCode];
+        return isNaN(rate) ? 1 : rate;
     }
 }
