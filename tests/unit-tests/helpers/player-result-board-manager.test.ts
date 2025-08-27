@@ -36,6 +36,7 @@ describe("PlayerResultBoardManager", () => {
             expect(gameData.playerResultBoard.players[0].uid).toBe("u1");
             expect(gameData.playerResultBoard.players[0].name).toBe("Alice");
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100);
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
             expect(gameData.playerResultBoard.totalPlayers).toBe(1);
         });
 
@@ -53,6 +54,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 20, 1);
             expect(gameData.playerResultBoard.players[0].uid).toBe("u3");
             expect(gameData.playerResultBoard.players[0].name).toBe("Charlie");
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should not add player when roundId does not match", () => {
@@ -69,6 +71,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(200); // 100 * 2.0
+            expect(gameData.playerResultBoard.players[0].rate).toBe(2.0);
         });
 
         it("should apply currency rate when player has session with different currency", () => {
@@ -79,6 +82,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(127.5, 10); // 100 * 1.5 * 0.85
+            expect(gameData.playerResultBoard.players[0].rate).toBeCloseTo(1.275, 10); // 1.5 * 0.85
         });
 
         it("should handle session with multiplier but no currency code", () => {
@@ -89,6 +93,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * 2.0 * undefined = NaN, falls back to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle session with currency code but no multiplier", () => {
@@ -99,6 +104,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * undefined * 1.0 = NaN, falls back to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle session with invalid multiplier (NaN)", () => {
@@ -109,6 +115,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle session with invalid currency rate (NaN)", () => {
@@ -119,12 +126,14 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle player with no session", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // No session, rate defaults to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle player with empty session object", () => {
@@ -135,6 +144,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // Empty session, rate defaults to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should apply rate to existing player updates", () => {
@@ -146,6 +156,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, 1);
             manager.addOrUpdatePlayer(player, 50, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(300); // (100 * 2) + (50 * 2)
+            expect(gameData.playerResultBoard.players[0].rate).toBe(2.0);
         });
 
         it("should handle complex currency calculations", () => {
@@ -156,6 +167,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(5500, 10); // 100 * 0.5 * 110.0
+            expect(gameData.playerResultBoard.players[0].rate).toBeCloseTo(55.0, 10); // 0.5 * 110.0
         });
 
         it("should handle zero multiplier", () => {
@@ -166,6 +178,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(0); // 100 * 0 * 1.0
+            expect(gameData.playerResultBoard.players[0].rate).toBe(0);
         });
 
         it("should handle negative multiplier", () => {
@@ -176,6 +189,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(-100); // 100 * -1 * 1.0
+            expect(gameData.playerResultBoard.players[0].rate).toBe(-1);
         });
 
         it("should handle very small multiplier values", () => {
@@ -186,6 +200,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(0.1, 10); // 100 * 0.001 * 1.0
+            expect(gameData.playerResultBoard.players[0].rate).toBeCloseTo(0.001, 10);
         });
 
         it("should handle very large multiplier values", () => {
@@ -196,6 +211,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100000); // 100 * 1000 * 1.0
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1000);
         });
 
         it("should handle session with null values", () => {
@@ -206,6 +222,7 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // null values result in NaN, fallback to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
 
         it("should handle session with undefined values", () => {
@@ -216,16 +233,29 @@ describe("PlayerResultBoardManager", () => {
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // undefined values result in NaN, fallback to 1
+            expect(gameData.playerResultBoard.players[0].rate).toBe(1);
         });
     });
 
     describe("updateWinAmounts", () => {
-        it("should update win amounts for a player", () => {
+        it("should update win amounts for a player using stored rate", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 2.0, currencyCode: "USD" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            const bet = { uid: "u1", betwin: 200 };
+            manager.updateWinAmounts(bet);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(400); // 200 * 2.0 (stored rate)
+        });
+
+        it("should update win amounts for a player with default rate", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
             const bet = { uid: "u1", betwin: 200 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100); // 200 - 100 = 100
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // 200 * 1 (default rate)
         });
 
         it("should set negative winAmount if no win", () => {
@@ -233,7 +263,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, 1);
             const bet = { uid: "u1", betwin: 0 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(-100); // 0 - 100 = -100
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(0); // 0 * 1 = 0
         });
 
         it("should not update winAmount if player not found", () => {
@@ -247,7 +277,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, 1);
             const bet = { uid: "u1", betwin: 100 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(0); // 100 - 100 = 0
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100); // 100 * 1 = 100
         });
 
         it("should handle case where betwin is greater than betAmount (big win)", () => {
@@ -255,7 +285,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 10, 1);
             const bet = { uid: "u1", betwin: 50 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(40); // 50 - 10 = 40
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(50); // 50 * 1 = 50
         });
 
         it("should handle case where betwin is less than betAmount (big loss)", () => {
@@ -263,7 +293,29 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 10, 1);
             const bet = { uid: "u1", betwin: 2 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(-8); // 2 - 10 = -8
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(2); // 2 * 1 = 2
+        });
+
+        it("should handle player with custom rate in win calculation", () => {
+            const player = { 
+                UID: "u1", 
+                profile: { name: "Alice" },
+                session: { multiplier: 1.5, currencyCode: "EUR" }
+            };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            const bet = { uid: "u1", betwin: 100 };
+            manager.updateWinAmounts(bet);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBeCloseTo(127.5, 10); // 100 * 1.275 (stored rate)
+        });
+
+        it("should handle missing rate field gracefully", () => {
+            const player = { UID: "u1", profile: { name: "Alice" } };
+            manager.addOrUpdatePlayer(player, 100, 1);
+            // Manually remove rate to test fallback
+            delete (gameData.playerResultBoard.players[0] as any).rate;
+            const bet = { uid: "u1", betwin: 200 };
+            manager.updateWinAmounts(bet);
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // 200 * 1 (fallback rate)
         });
     });
 
@@ -442,7 +494,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
             
-            manager.getBoardData(undefined);
+            manager.getBoardData();
             expect(gameData.playerResultBoard.players.length).toBe(2);
             expect(gameData.playerResultBoard.players[0].roundId).toBe(1);
             expect(gameData.playerResultBoard.players[1].roundId).toBe(1);
@@ -506,7 +558,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, 1);
             const bet = { uid: "u1", betwin: "200" };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(100); // "200" - 100 = 100
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // "200" * 1 = 200
         });
 
         it("should remove the last player if players exceed maxPlayers", () => {

@@ -7,6 +7,7 @@ interface PlayerEntry {
     betAmount: number;
     lastBetTime: Date;
     winAmount: number | null;
+    rate: number;
 }
 
 export default class PlayerResultBoardManager {
@@ -35,7 +36,7 @@ export default class PlayerResultBoardManager {
         if (index !== -1) {
             this.updateExistingPlayer(index, betAmountByRate);
         } else {
-            this.addNewPlayer(uid, name, betAmountByRate, roundId);
+            this.addNewPlayer(uid, name, betAmountByRate, roundId, rate);
         }
     }
 
@@ -48,7 +49,8 @@ export default class PlayerResultBoardManager {
         }
 
         const player = playerResultBoard.players[index];
-        player.winAmount = bet.betwin - player.betAmount;
+        const rate = player.rate ?? 1;
+        player.winAmount = bet.betwin * rate;
     }
 
     resetForNewRound() {
@@ -108,7 +110,7 @@ export default class PlayerResultBoardManager {
         players.unshift(player);
     }
 
-    private addNewPlayer(uid: string, name: string, betAmount: number, roundId: number) {
+    private addNewPlayer(uid: string, name: string, betAmount: number, roundId: number, rate: number) {
         const { playerResultBoard} = this.gameData;
 
         const newPlayer: PlayerEntry = {
@@ -118,6 +120,7 @@ export default class PlayerResultBoardManager {
             betAmount,
             lastBetTime: new Date(),
             winAmount: null,
+            rate,
         };
 
         playerResultBoard.players.unshift(newPlayer);

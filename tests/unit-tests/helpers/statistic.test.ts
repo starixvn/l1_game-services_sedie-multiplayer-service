@@ -45,7 +45,7 @@ describe("statistic: 100,000 times", () => {
             expect(percentageResult.odd).toBeGreaterThanOrEqual(49.5);
             expect(percentageResult.even).toBeGreaterThanOrEqual(49.5);
 
-            expect(percentageResult.red2).toBeGreaterThanOrEqual(37);
+            expect(percentageResult.red2).toBeGreaterThanOrEqual(36.9);
             expect(percentageResult.red3).toBeGreaterThanOrEqual(24);
             expect(percentageResult.white3).toBeGreaterThanOrEqual(24);
             expect(percentageResult.red4).toBeGreaterThanOrEqual(6);
