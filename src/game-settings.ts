@@ -16,8 +16,10 @@ export default {
     historyPageSize: 10,
     provablyFair: true,
     botSettings: {
-        ratio: { mainOption: 90, sideOption: 10 },
+        ratio: { mainOption: 90, sideOption: 5, sideOption2: 3, rareOption: 2 },
         mainOption: [BET_CHOICES.even, BET_CHOICES.odd],
-        sideOption: [BET_CHOICES.red2, BET_CHOICES.red3, BET_CHOICES.red4, BET_CHOICES.white3, BET_CHOICES.white4],
+        sideOption: [BET_CHOICES.red2],
+        sideOption2: [BET_CHOICES.red3, BET_CHOICES.white3],
+        rareOption: [BET_CHOICES.red4, BET_CHOICES.white4],
     },
 };
