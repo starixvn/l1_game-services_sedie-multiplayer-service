@@ -4,7 +4,7 @@ export default {
     id: 148,
     name: "SeDieMultiplayer",
     durations: {
-        wholeRound: 23,
+        wholeRound: 27,
         placingBets: 18,
         lockingBet: 3,
         shakeThePlateDuration: 1,
