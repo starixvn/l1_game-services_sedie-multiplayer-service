@@ -31,7 +31,19 @@ export default class UserSigninConsumer extends Table.EventConsumers.TableUserSi
     handleSignInSuccess(socketClient: Socket, userInfo: any, userSession: any) {
         super.handleSignInSuccess(socketClient, userInfo, userSession);
         
-        const boardData = this.playerResultBoardManager.getBoardData();
+        const boardData = this.getBoardDataForUser();
         this.playerResultBoardPublisher.publishBoardDataToUser(userInfo.id, boardData);
+    }
+
+    private getBoardDataForUser() {
+        const { durations } = this.definition;
+        const remainingTime = this.gameData.remainingTime;
+        const roundId = this.gameData.roundId;
+        
+        if (remainingTime > durations.placingBets && roundId > 1) {
+            return this.playerResultBoardManager.getBoardData(roundId - 1);
+        } else {
+            return this.playerResultBoardManager.getBoardData();
+        }
     }
 }
