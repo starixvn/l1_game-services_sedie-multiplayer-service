@@ -7,7 +7,7 @@ import {
     RoundResultConsumer,
     RoundIdConsumer,
     ProvablyFairConsumer,
-    UnsettledRoundConsumer
+    UnsettledRoundConsumer,
 } from "sc-game-base/src/core/event-consumers";
 import { GameStatusPublisher, RunningRoundInfoPublisher } from "sc-game-base/src/core/event-publishers";
 import GameManagementApiClientFactory from "sc-game-base/src/core/game-management-api";
@@ -33,7 +33,7 @@ export default class GameCron extends Table.Crons.TableGameCron {
         provablyFairConsumer,
         unsettledRoundConsumer,
         playerResultBoardManager,
-        playerResultBoardPublisher
+        playerResultBoardPublisher,
     }: {
         definition: GameDefinition;
         gameData: GameData;
@@ -76,11 +76,16 @@ export default class GameCron extends Table.Crons.TableGameCron {
         return remainingTime === durations.placingBets + durations.shakeThePlateDuration;
     }
 
-    resetForNewRound() {
-        super.resetForNewRound();
-        this.playerResultBoardManager.resetForNewRound();
-        
-        const boardData = this.playerResultBoardManager.getBoardData();
-        this.playerResultBoardPublisher.publishBoardUpdate(boardData);
+    async proceed() {
+        const { durations } = this.definition;
+        const remainingTime = this.gameData.remainingTime;
+
+        if (remainingTime === durations.placingBets) {
+            this.playerResultBoardManager.resetForNewRound();
+            const boardData = this.playerResultBoardManager.getBoardData();
+            this.playerResultBoardPublisher.publishBoardUpdate(boardData);
+        }
+
+        return super.proceed();
     }
 }
