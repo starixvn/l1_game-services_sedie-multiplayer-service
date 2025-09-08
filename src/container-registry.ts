@@ -1,5 +1,5 @@
 import awilix from "awilix";
-import { Table } from "sc-game-base";
+import { Core, Table } from "sc-game-base";
 import { Bets, Rounds, TmpBets, Results, BetLogs } from "./models/index";
 import { PlaceBetConsumer, RoundResultConsumer, SettleGameRoundConsumer, UserSigninConsumer, RebetConsumer } from "./consumers";
 import { PlayerResultBoardPublisher } from "./publishers";
@@ -44,6 +44,7 @@ export default class ContainerRegistry extends Table.TableContainerRegistry {
         super.registerPublishers();
 
         this.container.register({
+            placeBetPublisher: asClass(Core.BaseEventPublishers.PlaceBetPublisher).singleton(),
             playerResultBoardPublisher: asClass(PlayerResultBoardPublisher).singleton(),
         });
     }
