@@ -50,7 +50,7 @@ export default class ProcessBetQueue extends Table.Crons.TableProcessBetQueue {
             baseMetrics,
             provablyFairConsumer,
         });
-        
+
         this.playerResultBoardPublisher = playerResultBoardPublisher;
         this.playerResultBoardManager = playerResultBoardManager;
     }

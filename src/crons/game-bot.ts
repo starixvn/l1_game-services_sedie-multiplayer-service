@@ -39,14 +39,12 @@ export default class GameBot extends Table.Crons.TableGameConfigBot {
             const { bot, choice, amount, currentBet } = bet;
             bot.clientSeed = this.generateClientSeed();
             await this.insertOrUpdateBet(bot, choice, amount, currentBet);
-            
+
             this.totalTickets += 1;
             this.updateTotalBetsAndChips(choice, amount);
             this.updateBotInRoomData(bot, choice, amount, validBot.red);
-            this.updateBalanceAndPublishBetPayload(bot.id, choice, amount, validBot.red);
-            
+
             this.updateAndPublishPlayerResultBoard(bot, bet);
         });
     }
 }
-
