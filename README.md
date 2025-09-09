@@ -1,1 +1,1 @@
-# mini-roulette-service
+# se-die-multiplayer-service
