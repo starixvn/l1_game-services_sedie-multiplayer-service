@@ -1,14 +1,5 @@
 import appConfigs from "./app-configs";
 import gameSettings from "./game-settings";
-import { startTrace } from "sc-instrument";
-
-startTrace(
-    (appConfigs as any).otel?.enabled,
-    (appConfigs as any).otel?.endpoint,
-    (appConfigs as any).otel?.system,
-    appConfigs.sentry.env,
-    gameSettings.name
-);
 
 import { Core, Table } from "sc-game-base";
 import { generateResult, getSettlementResult } from "./helpers/result-helper";
