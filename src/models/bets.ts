@@ -10,6 +10,7 @@ const bet = {
     red4: { type: Number, default: 0 },
     white3: { type: Number, default: 0 },
     white4: { type: Number, default: 0 },
+    betWin: { type: Number, default: 0 },
 };
 
 const bets = mongoose.model(

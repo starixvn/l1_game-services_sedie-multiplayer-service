@@ -9,10 +9,18 @@ jest.mock("sc-game-base", () => ({
                 constructor(params: any) {
                     Object.assign(this, params);
                 }
-                queryBets(roundId: any) { return []; }
-                calculateBetResult(settlementResult: any, bet: any, odds: any) { return {}; }
-                createMetadata(params: any) { return {}; }
-                callEndGame(bet: any, roundId: any, time: any, betResult: any, metaData: any) { return Promise.resolve(); }
+                queryBets(roundId: any) {
+                    return [];
+                }
+                calculateBetResult(settlementResult: any, bet: any, odds: any) {
+                    return {};
+                }
+                createMetadata(params: any) {
+                    return {};
+                }
+                callEndGame(bet: any, roundId: any, time: any, betResult: any, metaData: any) {
+                    return Promise.resolve();
+                }
                 captureBetResult(uid: any, betResult: any, rate: any) {}
             },
         },
@@ -97,6 +105,7 @@ describe("SettleGameRoundConsumer", () => {
                         clientSeed: "seed1",
                         rate: 1.0,
                         betwin: 200,
+                        betWin: 200,
                     },
                 ];
                 const settlementResult = { choice1: true, choice2: false };
@@ -165,6 +174,7 @@ describe("SettleGameRoundConsumer", () => {
                         clientSeed: "seed1",
                         rate: 1.0,
                         betwin: 200,
+                        betWin: 200,
                     },
                     {
                         uid: "player2",
@@ -179,6 +189,7 @@ describe("SettleGameRoundConsumer", () => {
                         clientSeed: "seed2",
                         rate: 1.0,
                         betwin: 0,
+                        betWin: 0,
                     },
                 ];
                 const settlementResult = { choice1: true, choice2: false };
@@ -203,7 +214,7 @@ describe("SettleGameRoundConsumer", () => {
                     });
                 await settleGameRoundConsumer.settleBets({ settlementResult, roundId, time, result });
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledTimes(2);
-            expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
+                expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[0]);
                 expect(mockPlayerResultBoardManager.updateWinAmounts).toHaveBeenCalledWith(mockBets[1]);
                 expect(mockPlayerResultBoardManager.setSettled).toHaveBeenCalled();
                 expect(mockPlayerResultBoardManager.getBoardData).toHaveBeenCalledWith(roundId);

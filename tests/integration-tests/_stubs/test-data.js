@@ -66,6 +66,7 @@ const userBetData = (uid) => {
             freeBet: false,
             uid: uid,
             betwin: 0,
+            betWin: 0,
             currency: "$US",
             even: 100,
             playerId: 1,

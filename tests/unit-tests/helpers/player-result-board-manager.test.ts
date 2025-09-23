@@ -22,8 +22,8 @@ describe("PlayerResultBoardManager", () => {
                     EUR: 0.85,
                     JPY: 110.0,
                     KRW: 1200.0,
-                }
-            }
+                },
+            },
         } as any;
         manager = new PlayerResultBoardManager(gameData);
     });
@@ -64,10 +64,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should apply currency rate when player has session with multiplier and currency", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 2.0, currencyCode: "USD" }
+                session: { multiplier: 2.0, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(200); // 100 * 2.0
@@ -75,10 +75,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should apply currency rate when player has session with different currency", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 1.5, currencyCode: "EUR" }
+                session: { multiplier: 1.5, currencyCode: "EUR" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(127.5, 10); // 100 * 1.5 * 0.85
@@ -86,10 +86,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with multiplier but no currency code", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 2.0 }
+                session: { multiplier: 2.0 },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * 2.0 * undefined = NaN, falls back to 1
@@ -97,10 +97,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with currency code but no multiplier", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { currencyCode: "USD" }
+                session: { currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // 100 * undefined * 1.0 = NaN, falls back to 1
@@ -108,10 +108,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with invalid multiplier (NaN)", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: "invalid", currencyCode: "USD" }
+                session: { multiplier: "invalid", currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
@@ -119,10 +119,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with invalid currency rate (NaN)", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 2.0, currencyCode: "INVALID" }
+                session: { multiplier: 2.0, currencyCode: "INVALID" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // NaN result falls back to 1
@@ -137,10 +137,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle player with empty session object", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: {}
+                session: {},
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // Empty session, rate defaults to 1
@@ -148,10 +148,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should apply rate to existing player updates", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 2.0, currencyCode: "USD" }
+                session: { multiplier: 2.0, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             manager.addOrUpdatePlayer(player, 50, 1);
@@ -160,10 +160,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle complex currency calculations", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 0.5, currencyCode: "JPY" }
+                session: { multiplier: 0.5, currencyCode: "JPY" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(5500, 10); // 100 * 0.5 * 110.0
@@ -171,10 +171,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle zero multiplier", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 0, currencyCode: "USD" }
+                session: { multiplier: 0, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(0); // 100 * 0 * 1.0
@@ -182,10 +182,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle negative multiplier", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: -1, currencyCode: "USD" }
+                session: { multiplier: -1, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(-100); // 100 * -1 * 1.0
@@ -193,10 +193,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle very small multiplier values", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 0.001, currencyCode: "USD" }
+                session: { multiplier: 0.001, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBeCloseTo(0.1, 10); // 100 * 0.001 * 1.0
@@ -204,10 +204,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle very large multiplier values", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 1000, currencyCode: "USD" }
+                session: { multiplier: 1000, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100000); // 100 * 1000 * 1.0
@@ -215,10 +215,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with null values", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: null, currencyCode: null }
+                session: { multiplier: null, currencyCode: null },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // null values result in NaN, fallback to 1
@@ -226,10 +226,10 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should handle session with undefined values", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: undefined, currencyCode: undefined }
+                session: { multiplier: undefined, currencyCode: undefined },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(100); // undefined values result in NaN, fallback to 1
@@ -239,13 +239,13 @@ describe("PlayerResultBoardManager", () => {
 
     describe("updateWinAmounts", () => {
         it("should update win amounts for a player using stored rate", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 2.0, currencyCode: "USD" }
+                session: { multiplier: 2.0, currencyCode: "USD" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: 200 };
+            const bet = { uid: "u1", betWin: 200 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(400); // 200 * 2.0 (stored rate)
         });
@@ -253,7 +253,7 @@ describe("PlayerResultBoardManager", () => {
         it("should update win amounts for a player with default rate", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: 200 };
+            const bet = { uid: "u1", betWin: 200 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // 200 * 1 (default rate)
         });
@@ -261,49 +261,49 @@ describe("PlayerResultBoardManager", () => {
         it("should set negative winAmount if no win", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: 0 };
+            const bet = { uid: "u1", betWin: 0 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(0); // 0 * 1 = 0
         });
 
         it("should not update winAmount if player not found", () => {
-            const bet = { uid: "notfound", betwin: 100 };
+            const bet = { uid: "notfound", betWin: 100 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players.length).toBe(0);
         });
 
-        it("should handle case where betwin equals betAmount (break even)", () => {
+        it("should handle case where betWin equals betAmount (break even)", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: 100 };
+            const bet = { uid: "u1", betWin: 100 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(100); // 100 * 1 = 100
         });
 
-        it("should handle case where betwin is greater than betAmount (big win)", () => {
+        it("should handle case where betWin is greater than betAmount (big win)", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 10, 1);
-            const bet = { uid: "u1", betwin: 50 };
+            const bet = { uid: "u1", betWin: 50 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(50); // 50 * 1 = 50
         });
 
-        it("should handle case where betwin is less than betAmount (big loss)", () => {
+        it("should handle case where betWin is less than betAmount (big loss)", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 10, 1);
-            const bet = { uid: "u1", betwin: 2 };
+            const bet = { uid: "u1", betWin: 2 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(2); // 2 * 1 = 2
         });
 
         it("should handle player with custom rate in win calculation", () => {
-            const player = { 
-                UID: "u1", 
+            const player = {
+                UID: "u1",
                 profile: { name: "Alice" },
-                session: { multiplier: 1.5, currencyCode: "EUR" }
+                session: { multiplier: 1.5, currencyCode: "EUR" },
             };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: 100 };
+            const bet = { uid: "u1", betWin: 100 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBeCloseTo(127.5, 10); // 100 * 1.275 (stored rate)
         });
@@ -313,7 +313,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer(player, 100, 1);
             // Manually remove rate to test fallback
             delete (gameData.playerResultBoard.players[0] as any).rate;
-            const bet = { uid: "u1", betwin: 200 };
+            const bet = { uid: "u1", betWin: 200 };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // 200 * 1 (fallback rate)
         });
@@ -441,7 +441,7 @@ describe("PlayerResultBoardManager", () => {
         it("should filter players by roundId and update totalPlayers when filtered count is less than maxPlayers", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
-            
+
             expect(gameData.playerResultBoard.totalPlayers).toBe(2);
             const result1 = manager.getBoardData(1);
             expect(result1?.playerResultBoard.players.length).toBe(2);
@@ -450,7 +450,7 @@ describe("PlayerResultBoardManager", () => {
             manager.addOrUpdatePlayer({ UID: "u3", profile: { name: "Charlie" } }, 300, 2);
             manager.addOrUpdatePlayer({ UID: "u4", profile: { name: "David" } }, 400, 2);
             manager.addOrUpdatePlayer({ UID: "u5", profile: { name: "Eve" } }, 500, 2);
-            
+
             const result2 = manager.getBoardData(2);
             expect(result2?.playerResultBoard.players.length).toBe(3);
             expect(result2?.playerResultBoard.totalPlayers).toBe(3);
@@ -471,7 +471,7 @@ describe("PlayerResultBoardManager", () => {
             for (let i = 0; i < 11; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
             }
-            
+
             expect(gameData.playerResultBoard.totalPlayers).toBe(11);
             gameData.playerResultBoard.totalPlayers = 5;
             const result = manager.getBoardData(1);
@@ -482,7 +482,7 @@ describe("PlayerResultBoardManager", () => {
         it("should handle filtering when no players exist for the specified round", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
-            
+
             gameData.playerResultBoard.totalPlayers = 2;
             const result = manager.getBoardData(999);
             expect(result?.playerResultBoard.players.length).toBe(0);
@@ -493,7 +493,7 @@ describe("PlayerResultBoardManager", () => {
         it("should use nullish coalescing operator for roundId fallback", () => {
             manager.addOrUpdatePlayer({ UID: "u1", profile: { name: "Alice" } }, 100, 1);
             manager.addOrUpdatePlayer({ UID: "u2", profile: { name: "Bob" } }, 200, 1);
-            
+
             manager.getBoardData();
             expect(gameData.playerResultBoard.players.length).toBe(2);
             expect(gameData.playerResultBoard.players[0].roundId).toBe(1);
@@ -504,12 +504,12 @@ describe("PlayerResultBoardManager", () => {
             for (let i = 0; i < 10; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
             }
-            
+
             gameData.playerResultBoard.totalPlayers = 1;
             const result1 = manager.getBoardData(1);
             expect(result1?.playerResultBoard.players.length).toBe(10);
             expect(result1?.playerResultBoard.totalPlayers).toBe(1);
-            
+
             manager.resetForNewRound();
             gameData.roundId = 2;
             const result2 = manager.getBoardData(2);
@@ -545,7 +545,7 @@ describe("PlayerResultBoardManager", () => {
             expect(gameData.playerResultBoard.players[0].betAmount).toBe(-50);
         });
 
-        it("should handle updateWinAmounts with missing betwin", () => {
+        it("should handle updateWinAmounts with missing betWin", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
             const bet = { uid: "u1" };
@@ -553,10 +553,10 @@ describe("PlayerResultBoardManager", () => {
             expect(gameData.playerResultBoard.players[0].winAmount).toBeNaN(); // 100 - undefined = NaN
         });
 
-        it("should handle updateWinAmounts with string betwin", () => {
+        it("should handle updateWinAmounts with string betWin", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
-            const bet = { uid: "u1", betwin: "200" };
+            const bet = { uid: "u1", betWin: "200" };
             manager.updateWinAmounts(bet);
             expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // "200" * 1 = 200
         });

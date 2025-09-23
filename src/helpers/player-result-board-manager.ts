@@ -50,7 +50,7 @@ export default class PlayerResultBoardManager {
 
         const player = playerResultBoard.players[index];
         const rate = player.rate ?? 1;
-        player.winAmount = bet.betwin * rate;
+        player.winAmount = bet.betWin * rate;
     }
 
     resetForNewRound() {
@@ -94,7 +94,7 @@ export default class PlayerResultBoardManager {
         playerResultBoard.players = playerResultBoard.players.filter((player) => player.roundId === currentRoundId);
 
         const currentCount = playerResultBoard.players.length;
-        if(currentCount < this.maxPlayers) {
+        if (currentCount < this.maxPlayers) {
             playerResultBoard.totalPlayers = currentCount;
         }
     }
@@ -111,7 +111,7 @@ export default class PlayerResultBoardManager {
     }
 
     private addNewPlayer(uid: string, name: string, betAmount: number, roundId: number, rate: number) {
-        const { playerResultBoard} = this.gameData;
+        const { playerResultBoard } = this.gameData;
 
         const newPlayer: PlayerEntry = {
             uid,
