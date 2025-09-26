@@ -4,6 +4,7 @@ import PlayerResultBoardManager from "../../../src/helpers/player-result-board-m
 describe("PlayerResultBoardManager", () => {
     let manager: PlayerResultBoardManager;
     let gameData: GameData;
+    const maxPlayers = 100;
 
     beforeEach(() => {
         gameData = {
@@ -311,11 +312,10 @@ describe("PlayerResultBoardManager", () => {
         it("should handle missing rate field gracefully", () => {
             const player = { UID: "u1", profile: { name: "Alice" } };
             manager.addOrUpdatePlayer(player, 100, 1);
-            // Manually remove rate to test fallback
-            delete (gameData.playerResultBoard.players[0] as any).rate;
+            delete gameData.playerResultBoard.players[0].rate;
             const bet = { uid: "u1", betWin: 200 };
             manager.updateWinAmounts(bet);
-            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200); // 200 * 1 (fallback rate)
+            expect(gameData.playerResultBoard.players[0].winAmount).toBe(200);
         });
     });
 
@@ -457,26 +457,26 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should not update totalPlayers when filtered count equals maxPlayers", () => {
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < maxPlayers; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
             }
-            expect(gameData.playerResultBoard.totalPlayers).toBe(10);
-            gameData.playerResultBoard.totalPlayers = 5;
+            expect(gameData.playerResultBoard.totalPlayers).toBe(maxPlayers);
+            gameData.playerResultBoard.totalPlayers = 200;
             const result = manager.getBoardData(1);
-            expect(result?.playerResultBoard.players.length).toBe(10);
-            expect(result?.playerResultBoard.totalPlayers).toBe(5);
+            expect(result?.playerResultBoard.players.length).toBe(maxPlayers);
+            expect(result?.playerResultBoard.totalPlayers).toBe(maxPlayers);
         });
 
         it("should not update totalPlayers when filtered count is greater than maxPlayers", () => {
-            for (let i = 0; i < 11; i++) {
+            for (let i = 0; i < maxPlayers + 1; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
             }
 
-            expect(gameData.playerResultBoard.totalPlayers).toBe(11);
+            expect(gameData.playerResultBoard.totalPlayers).toBe(maxPlayers + 1);
             gameData.playerResultBoard.totalPlayers = 5;
             const result = manager.getBoardData(1);
-            expect(result?.playerResultBoard.players.length).toBe(10);
-            expect(result?.playerResultBoard.totalPlayers).toBe(5);
+            expect(result?.playerResultBoard.players.length).toBe(maxPlayers);
+            expect(result?.playerResultBoard.totalPlayers).toBe(maxPlayers);
         });
 
         it("should handle filtering when no players exist for the specified round", () => {
@@ -501,14 +501,14 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should test filterPlayersByRound behavior with maxPlayers boundary", () => {
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < maxPlayers; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 100, 1);
             }
 
             gameData.playerResultBoard.totalPlayers = 1;
             const result1 = manager.getBoardData(1);
-            expect(result1?.playerResultBoard.players.length).toBe(10);
-            expect(result1?.playerResultBoard.totalPlayers).toBe(1);
+            expect(result1?.playerResultBoard.players.length).toBe(maxPlayers);
+            expect(result1?.playerResultBoard.totalPlayers).toBe(maxPlayers);
 
             manager.resetForNewRound();
             gameData.roundId = 2;
@@ -562,11 +562,11 @@ describe("PlayerResultBoardManager", () => {
         });
 
         it("should remove the last player if players exceed maxPlayers", () => {
-            for (let i = 0; i < 11; i++) {
+            for (let i = 0; i < maxPlayers + 1; i++) {
                 manager.addOrUpdatePlayer({ UID: `u${i}`, profile: { name: `Player${i}` } }, 10, 1);
             }
-            expect(gameData.playerResultBoard.players.length).toBe(10);
-            expect(gameData.playerResultBoard.totalPlayers).toBe(11);
+            expect(gameData.playerResultBoard.players.length).toBe(maxPlayers);
+            expect(gameData.playerResultBoard.totalPlayers).toBe(maxPlayers + 1);
             const uids = gameData.playerResultBoard.players.map((p) => p.uid);
             expect(uids).not.toContain("u0");
         });

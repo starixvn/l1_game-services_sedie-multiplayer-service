@@ -12,7 +12,7 @@ interface PlayerEntry {
 
 export default class PlayerResultBoardManager {
     private readonly gameData: GameData;
-    private readonly maxPlayers: number = 10;
+    private readonly maxPlayers: number = 100;
 
     constructor(gameData: GameData) {
         this.gameData = gameData;
@@ -94,7 +94,7 @@ export default class PlayerResultBoardManager {
         playerResultBoard.players = playerResultBoard.players.filter((player) => player.roundId === currentRoundId);
 
         const currentCount = playerResultBoard.players.length;
-        if (currentCount < this.maxPlayers) {
+        if (currentCount <= this.maxPlayers) {
             playerResultBoard.totalPlayers = currentCount;
         }
     }
